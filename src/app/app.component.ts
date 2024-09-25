@@ -17,7 +17,10 @@ export class AppComponent {
   title = 'm3-management';
   constructor(injector: Injector) {
     const management = createCustomElement(ManagementComponent, {injector});
+    //before defining the custom element, check if it is already defined
+    if (!customElements.get('management-element')) {
     // Register the custom element with the browser.
     customElements.define('management-element', management);
+    }
   }
 }
