@@ -1,27 +1,27 @@
-import { Component } from '@angular/core';
+import { Component, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { AuthServiceService } from '../auth-service.service';
+import { CryptoServiceService } from '../crypto-service.service';
 
 @Component({
   selector: 'app-login',
   standalone: true,
   imports: [FormsModule],
-  providers: [AuthServiceService],
+  providers: [AuthServiceService, CryptoServiceService],
   templateUrl: './login.component.html',
   styleUrl: './login.component.scss'
 })
 
 export class LoginComponent {
   public name: string = 'login';
-  public email: string = '';
+  public username: string = '';
   public password: string = '';
   public error: object = {};
 
-  constructor(private auth: AuthServiceService) {}
+  constructor(private auth: AuthServiceService, private crypto: CryptoServiceService) {}
   login() {
     // encrypt the password
 
-    this.auth.login(); // prints 'AuthServiceService login'
-    alert(this.email + ' ' + this.password);
+    this.auth.login(this.username, this.crypto.encryptData(this.password));
   }
 }
