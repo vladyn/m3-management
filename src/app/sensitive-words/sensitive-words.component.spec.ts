@@ -8,7 +8,7 @@ describe('SensitiveWordsComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [SensitiveWordsComponent]
+      declarations: [SensitiveWordsComponent]
     })
     .compileComponents();
 
