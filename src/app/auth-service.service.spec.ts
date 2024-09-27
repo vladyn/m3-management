@@ -20,4 +20,16 @@ describe('AuthServiceService', () => {
     expect(httpTestingController).toBeTruthy();
     expect(httpClient).toBeTruthy();
   });
+
+  it('should get token', () => {
+    service = new AuthServiceService(httpClient);
+    const username = 'username';
+    const password = 'password';
+    service.getToken(username, password);
+    const req = httpTestingController.expectOne('https://niobe3-test.europe-matrix.bg:4222/api/security/authentication/getToken');
+    expect(req.request.method).toEqual('POST');
+    req.flush
+    ({token : 'token'});
+    httpTestingController.verify();
+  });
 });

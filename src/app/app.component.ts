@@ -14,7 +14,7 @@ import { ManagementComponent } from './management/management.component';
 })
 export class AppComponent {
   @Input() name: string = 'm3-management';
-  protected title = signal('');
+  public title = signal('');
 
   constructor(injector: Injector) {
     this.title.set('m3-management');
