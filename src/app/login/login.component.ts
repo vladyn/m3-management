@@ -13,15 +13,12 @@ import { CryptoServiceService } from '../crypto-service.service';
 })
 
 export class LoginComponent {
-  public name: string = 'login';
   public username: string = '';
   public password: string = '';
   public error: object = {};
 
   constructor(private auth: AuthServiceService, private crypto: CryptoServiceService) {}
   login() {
-    // encrypt the password
-
-    this.auth.login(this.username, this.crypto.encryptData(this.password));
+    this.auth.getToken(this.username, this.crypto.encryptData(this.password));
   }
 }

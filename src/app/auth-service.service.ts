@@ -6,16 +6,11 @@ import { environment } from '../environment';
   providedIn: 'root'
 })
 export class AuthServiceService {
+  constructor(private http: HttpClient) { }
 
-  constructor(http: HttpClient) {
-    console.log('AuthServiceService constructor');
-    console.log(http);
-    console.log(environment.authToken);
-    console.log(environment.version);
-    console.log(environment.appName);
-   }
-
-   login(email: string, password: string) {
-     console.log('AuthServiceService login');
+   getToken(username: string, password: string) {
+    return this.http.post(environment.authToken, {username, password}).subscribe((response) => {
+      console.log(response);
+    });
  }
 }
