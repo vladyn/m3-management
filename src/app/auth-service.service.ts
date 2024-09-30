@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpHeaderResponse, HttpHeaders } from '@angular/common/http';
 import { environment } from '../environment';
+import { urlString } from './utils/helpers';
 
 @Injectable({
   providedIn: 'root'
@@ -9,8 +10,17 @@ export class AuthServiceService {
   constructor(private http: HttpClient) { }
 
    getToken(username: string, password: string) {
-    return this.http.post(environment.authToken, {username, password}).subscribe((response) => {
+    const requestBody: Request = {client_id: 'matrix3ui', username, password };
+    const headers = new HttpHeaders().set('Content-Type', 'application/x-www-form-urlencoded');
+    const options = { headers };
+    return this.http.post(environment.authToken, urlString(requestBody), options).subscribe((response) => {
       console.log(response);
     });
  }
+}
+
+interface Request {
+  username: string,
+  password: string,
+  client_id: string,
 }

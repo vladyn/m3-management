@@ -2,6 +2,7 @@ import { Component, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { AuthServiceService } from '../auth-service.service';
 import { CryptoServiceService } from '../crypto-service.service';
+import { DEFAULT_ENCRYPT_KEY as key } from '../../enums';
 
 @Component({
   selector: 'app-login',
@@ -19,6 +20,6 @@ export class LoginComponent {
 
   constructor(private auth: AuthServiceService, private crypto: CryptoServiceService) {}
   login() {
-    this.auth.getToken(this.username, this.crypto.encryptData(this.password));
+    this.auth.getToken(this.username, this.crypto.encryptData(this.password, key));
   }
 }
