@@ -1,4 +1,4 @@
-import { Component, Input, Injector, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
+import { Component, Input, Injector, CUSTOM_ELEMENTS_SCHEMA, signal } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
 import { createCustomElement } from '@angular/elements';
 import { FormsModule } from '@angular/forms';
@@ -14,10 +14,15 @@ import { ManagementComponent } from './management/management.component';
 })
 export class AppComponent {
   @Input() name: string = 'm3-management';
-  title = 'm3-management';
+  public title = signal('');
+
   constructor(injector: Injector) {
+    this.title.set('m3-management');
     const management = createCustomElement(ManagementComponent, {injector});
+    //before defining the custom element, check if it is already defined
+    if (!customElements.get('management-element')) {
     // Register the custom element with the browser.
     customElements.define('management-element', management);
+    }
   }
 }

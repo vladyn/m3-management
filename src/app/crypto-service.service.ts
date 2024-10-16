@@ -5,25 +5,30 @@ import * as CryptoJS from 'crypto-js';
   providedIn: 'root',
 })
 export class CryptoServiceService {
-  private key = 'encrypt!ablala';
+  private iv = CryptoJS.lib.WordArray.random(128 / 8);
 
-  public encryptData(data: string) {
+  public encryptData(data: string, client_id: string) {
+    const key = CryptoJS.PBKDF2(data, this.iv, {
+      keySize: 256 / 32,
+      iterations: 10000,
+      hasher: CryptoJS.algo.SHA1,
+    });
+
     try {
-      return CryptoJS.AES.encrypt(data, this.key).toString();
+      var encrypted = CryptoJS.AES.encrypt(
+        CryptoJS.enc.Utf8.parse(client_id),
+        key,
+        {
+          iv: this.iv,
+          padding: CryptoJS.pad.ZeroPadding,
+          mode: CryptoJS.mode.CBC,
+        }
+      );
+      return CryptoJS.enc.Base64.stringify(
+        this.iv.concat(encrypted.ciphertext)
+      );
     } catch (e) {
       throw new Error(`Error while encrypting: ${e}`);
-    }
-  }
-
-  public decryptData(data: string) {
-    try {
-      const bytes = CryptoJS.AES.decrypt(data, this.key);
-      if (bytes.toString()) {
-        return bytes.toString(CryptoJS.enc.Utf8);
-      }
-      return bytes;
-    } catch (e) {
-      throw new Error(`Error while decrypting: ${e}`);
     }
   }
 }
