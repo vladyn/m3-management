@@ -3,16 +3,25 @@ import { BrowserModule } from '@angular/platform-browser';
 import { CommonModule } from '@angular/common';
 import { createCustomElement } from '@angular/elements';
 import { RouterOutlet } from '@angular/router';
-import { SensitiveWordsComponent } from '../sensitive-words/sensitive-words.component';
+import { VgCoreModule } from '@videogular/ngx-videogular/core';
+import { VgControlsModule } from '@videogular/ngx-videogular/controls';
+import { VgOverlayPlayModule } from '@videogular/ngx-videogular/overlay-play';
+import { VgBufferingModule} from '@videogular/ngx-videogular/buffering';
+import { AudioPlayerComponent } from '../audio-player/audio-player.component';
+import { SensitiveWordsComponent } from '../sensitive-words/sensitive-words.component'
 
 
 
 @NgModule({
-  declarations: [SensitiveWordsComponent],
+  declarations: [SensitiveWordsComponent, AudioPlayerComponent],
   imports: [
     CommonModule,
     BrowserModule,
-    RouterOutlet
+    RouterOutlet,
+    VgCoreModule,
+    VgControlsModule,
+    VgOverlayPlayModule,
+    VgBufferingModule
   ]
 })
 export class AppModuleModule implements DoBootstrap {
