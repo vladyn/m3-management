@@ -3,11 +3,12 @@ import { RouterOutlet } from '@angular/router';
 import { createCustomElement } from '@angular/elements';
 import { FormsModule } from '@angular/forms';
 import { ManagementComponent } from './management/management.component';
+import { AudioPlayerComponent } from './audio-player/audio-player.component';
 
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [RouterOutlet, FormsModule, ManagementComponent],
+  imports: [RouterOutlet, FormsModule, ManagementComponent, AudioPlayerComponent],
   templateUrl: './app.component.html',
   styleUrl: './app.component.scss',
   schemas: [CUSTOM_ELEMENTS_SCHEMA]

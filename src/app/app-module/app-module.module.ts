@@ -13,7 +13,7 @@ import { SensitiveWordsComponent } from '../sensitive-words/sensitive-words.comp
 
 
 @NgModule({
-  declarations: [SensitiveWordsComponent, AudioPlayerComponent],
+  declarations: [SensitiveWordsComponent],
   imports: [
     CommonModule,
     BrowserModule,
@@ -21,7 +21,8 @@ import { SensitiveWordsComponent } from '../sensitive-words/sensitive-words.comp
     VgCoreModule,
     VgControlsModule,
     VgOverlayPlayModule,
-    VgBufferingModule
+    VgBufferingModule,
+    AudioPlayerComponent
   ]
 })
 export class AppModuleModule implements DoBootstrap {

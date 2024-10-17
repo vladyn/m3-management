@@ -1,1 +1,73 @@
-<p>audio-player works!</p>
+<vg-player
+  (onPlayerReady)="onPlayerReady($event)"
+  vg-crossorigin="ctrl.config.crossorigin"
+  style="height: 50px;">
+  <vg-controls>
+      <vg-play-pause></vg-play-pause>
+      <vg-playback-button></vg-playback-button>
+
+      <vg-time-display vgProperty="current" vgFormat="mm:ss"></vg-time-display>
+
+      <vg-scrub-bar>
+          <vg-scrub-bar-current-time></vg-scrub-bar-current-time>
+          <vg-scrub-bar-buffering-time></vg-scrub-bar-buffering-time>
+      </vg-scrub-bar>
+
+      <vg-time-display vgProperty="left" vgFormat="mm:ss"></vg-time-display>
+      <vg-time-display vgProperty="total" vgFormat="mm:ss"></vg-time-display>
+
+      <vg-mute></vg-mute>
+  </vg-controls>
+
+  <audio #media [vgMedia]="$any(media)" id="myAudio" preload=[preload]>
+      <source *ngFor="let audio of sources" [src]="audio.src" [type]="audio.type">
+      <track
+      src="assets/data/cue-points.vtt"
+      kind="metadata"
+      label="Cue Points"
+      default
+      #metadataTrack
+      vgCuePoints
+      (onEnterCuePoint)="onEnterCuePoint($event)"
+      (onExitCuePoint)="onExitCuePoint($event)"
+    />
+  </audio>
+</vg-player>
+
+<div class="cue-point-manager-layer" *ngIf="showCuePointManager">
+  <div class="cue-list" *ngIf="track?.cues?.length > 0">
+    <table class="cue-table">
+      <thead>
+        <tr class="cue-row">
+          <th>Start Time</th>
+          <th>End Time</th>
+          <th class="json-header">JSON</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let cue of track?.cues" class="cue-row">
+          <td>{{ cue.startTime }}</td>
+          <td>{{ cue.endTime }}</td>
+          <td class="json">{{ json.parse(cue.text).title }}</td>
+          <td class="actions">
+            <button type="button" class="eos-button tertiary" (click)="onClickGo(cue)">Go to</button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+<ng-container *ngIf="activeCuePoints">
+  <div *ngFor="let cuePointData of activeCuePoints" class="info-layer">
+    <h3>
+      <a [href]="cuePointData?.href" target="_blank">{{
+        cuePointData?.title
+      }}</a>
+    </h3>
+    <p>
+      <img [src]="cuePointData?.src" />
+      {{ cuePointData?.description }}
+    </p>
+  </div>
+</ng-container>
