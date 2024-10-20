@@ -27,8 +27,8 @@ export class AudioPlayerComponent implements OnInit {
     constructor() {
         this.sources = [
             {
-                src: "/assets/audio/file_example_MP3_700KB.mp3",
-                type: "audio/mp3"
+                src: "/assets/audio/E_DarinaD_D_2024-10-07_H_100748_060_CLID_00894553778.wav",
+                type: "audio/wav"
             }
         ];
     }
@@ -37,6 +37,7 @@ export class AudioPlayerComponent implements OnInit {
       this.api = source;
       this.api.getDefaultMedia().subscriptions.canPlay.subscribe(() => {
         this.track = this.api.getDefaultMedia().textTracks[0];
+        console.log(JSON.stringify(this.track));
         this.loaded = true;
       });
 

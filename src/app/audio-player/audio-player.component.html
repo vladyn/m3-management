@@ -22,7 +22,7 @@
   <audio #media [vgMedia]="$any(media)" id="myAudio" preload=[preload]>
       <source *ngFor="let audio of sources" [src]="audio.src" [type]="audio.type">
       <track
-      src="assets/data/cue-points.vtt"
+      src="assets/data/Downloaded_transcriptVVV.vtt"
       kind="metadata"
       label="Cue Points"
       default
@@ -34,8 +34,8 @@
   </audio>
 </vg-player>
 
-<div class="cue-point-manager-layer" *ngIf="showCuePointManager">
-  <div class="cue-list" *ngIf="track?.cues?.length > 0">
+<div class="cue-point-manager-layer" id="cuePoints" *ngIf="showCuePointManager">
+  <div class="cue-list" id="queList" *ngIf="track?.cues?.length > 0">
     <table class="cue-table">
       <thead>
         <tr class="cue-row">
@@ -49,7 +49,7 @@
         <tr *ngFor="let cue of track?.cues" class="cue-row">
           <td>{{ cue.startTime }}</td>
           <td>{{ cue.endTime }}</td>
-          <td class="json">{{ json.parse(cue.text).title }}</td>
+          <td class="json">{{ cue.text }}</td>
           <td class="actions">
             <button type="button" class="eos-button tertiary" (click)="onClickGo(cue)">Go to</button>
           </td>
