@@ -37,7 +37,6 @@ export class AudioPlayerComponent implements OnInit {
       this.api = source;
       this.api.getDefaultMedia().subscriptions.canPlay.subscribe(() => {
         this.track = this.api.getDefaultMedia().textTracks[0];
-        console.log(JSON.stringify(this.track));
         this.loaded = true;
       });
 

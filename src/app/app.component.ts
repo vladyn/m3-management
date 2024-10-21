@@ -25,5 +25,13 @@ export class AppComponent {
     // Register the custom element with the browser.
     customElements.define('management-element', management);
     }
+
+    // register audio-player-element
+    if (!customElements.get('audio-player-element')) {
+      const audioPlayerComponent = createCustomElement(AudioPlayerComponent, {
+        injector
+      });
+      customElements.define('audio-player-element', audioPlayerComponent);
+  }
   }
 }

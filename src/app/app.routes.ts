@@ -6,12 +6,6 @@ import { AudioPlayerComponent } from './audio-player/audio-player.component';
 
 export const routes: Routes = [
   {
-    // default path to load the app component
-    path: '',
-    pathMatch: 'full',
-    component: AppComponent,
-  },
-  {
     path: 'login',
     component: LoginComponent,
     canActivate: [authGuardGuard]
