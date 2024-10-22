@@ -32,19 +32,6 @@ import { SensitiveWordsComponent } from '../sensitive-words/sensitive-words.comp
 export class AppModuleModule implements DoBootstrap {
   constructor(private injector: Injector) {}
   ngDoBootstrap(appRef: ApplicationRef) {
-    if (!customElements.get('sensitive-words-element')) {
-      // Register only if 'sensitive-words-element' entry is not found in the registry
-
-      // Step 3: AppComponent stores the constructor class
-      const wordsComponent = createCustomElement(SensitiveWordsComponent, {
-        injector: this.injector, // This injector is used to load the component's factory
-      });
-
-      // Step 4: Registering custom tag 'sensitive-words-element' with the obtained custom class
-      customElements.define('sensitive-words-element', wordsComponent);
-    }
-
-    // register audio-player-element
     if (!customElements.get('audio-player-element')) {
       const audioPlayerComponent = createCustomElement(AudioPlayerComponent, {
         injector: this.injector,

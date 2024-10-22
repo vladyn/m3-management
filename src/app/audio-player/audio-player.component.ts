@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnInit } from "@angular/core";
+import { ChangeDetectorRef, Component, OnInit } from "@angular/core";
 import { VgCoreModule, VgApiService } from '@videogular/ngx-videogular/core';
 import { VgControlsModule } from '@videogular/ngx-videogular/controls';
 import { VgOverlayPlayModule } from '@videogular/ngx-videogular/overlay-play';
@@ -24,7 +24,7 @@ export class AudioPlayerComponent implements OnInit {
     json: JSON = JSON;
     loaded = false;
 
-    constructor() {
+    constructor(private cd: ChangeDetectorRef) {
         this.sources = [
             {
                 src: "/assets/audio/E_DarinaD_D_2024-10-07_H_100748_060_CLID_00894553778.wav",
@@ -44,25 +44,33 @@ export class AudioPlayerComponent implements OnInit {
         // Set the video to the beginning
         this.api.getDefaultMedia().currentTime = 0;
       });
+      this.cd.detectChanges();
     }
 
     onEnterCuePoint($event: any) {
       this.activeCuePoints.push({ id: $event.id, ...JSON.parse($event.text) });
       this.showCuePointManager = true;
+      this.cd.detectChanges();
     }
 
     onExitCuePoint($event: any) {
       this.activeCuePoints = this.activeCuePoints.filter(
         (c) => c.id !== $event.id
       );
+      this.cd.detectChanges();
     }
 
     onClickGo(cue: TextTrackCue) {
       this.api.getDefaultMedia().currentTime = cue?.startTime;
       this.api.play();
+      this.cd.detectChanges();
     }
 
     ngOnInit() {
+    }
+
+    ngAfterViewInit(): void {
+      this.cd.detectChanges();
     }
 }
 
