@@ -4,7 +4,9 @@
   "scripts": {
     "ng": "ng",
     "start": "ng serve m3-management",
-    "build": "ng build m3-elements",
+    "build:management": "ng build m3-management",
+    "build:elements": "ng build m3-elements",
+    "build:webcomponent": "ng build m3-webcomponent",
     "watch": "ng build --watch --configuration development",
     "test": "ng test"
   },

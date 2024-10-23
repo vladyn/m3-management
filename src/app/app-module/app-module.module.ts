@@ -1,6 +1,5 @@
 import {
   NgModule,
-  Inject,
   DoBootstrap,
   ApplicationRef,
   Injector,
@@ -14,10 +13,8 @@ import { VgControlsModule } from '@videogular/ngx-videogular/controls';
 import { VgOverlayPlayModule } from '@videogular/ngx-videogular/overlay-play';
 import { VgBufferingModule } from '@videogular/ngx-videogular/buffering';
 import { AudioPlayerComponent } from '../audio-player/audio-player.component';
-import { SensitiveWordsComponent } from '../sensitive-words/sensitive-words.component';
 
 @NgModule({
-  declarations: [SensitiveWordsComponent],
   imports: [
     CommonModule,
     BrowserModule,
