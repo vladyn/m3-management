@@ -4,7 +4,9 @@
   "scripts": {
     "ng": "ng",
     "start": "ng serve m3-management",
-    "build": "ng build m3-management",
+    "build:management": "ng build m3-management",
+    "build:elements": "ng build m3-elements",
+    "build:webcomponent": "ng build m3-webcomponent",
     "watch": "ng build --watch --configuration development",
     "test": "ng test"
   },
@@ -19,6 +21,7 @@
     "@angular/platform-browser": "^18.2.0",
     "@angular/platform-browser-dynamic": "^18.2.0",
     "@angular/router": "^18.2.0",
+    "@videogular/ngx-videogular": "^10.0.1",
     "crypto-js": "^4.2.0",
     "ngx-build-plus": "^18.0.0",
     "rxjs": "~7.8.0",
@@ -29,6 +32,7 @@
     "@angular/cli": "^18.2.5",
     "@angular/compiler-cli": "^18.2.0",
     "@ngx-env/builder": "^18.0.1",
+    "@types/core-js": "^2.5.8",
     "@types/crypto-js": "^4.2.2",
     "@types/jasmine": "~5.1.0",
     "@types/node": "^22.7.2",

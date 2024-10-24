@@ -1,0 +1,19 @@
+WEBVTT FILE
+
+Collection tab
+00:00:02.200 --> 00:00:15.800
+{
+    "title": "Collection tab3345324",
+    "description": "Описателен текст за конкретния cue point.",
+    "src": "assets/images/m3_day1.png",
+    "href": "/#/collection"
+}
+
+Management tab
+00:00:21.800 --> 00:01:28.600
+{
+    "title": "Management tab3453245",
+    "description": "Описателен текст за конкретния cue point.",
+    "src": "assets/images/m3_day2.png",
+    "href": "/#/management"
+}

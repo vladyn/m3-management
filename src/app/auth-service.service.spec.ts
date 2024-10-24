@@ -26,7 +26,7 @@ describe('AuthServiceService', () => {
     const username = 'username';
     const password = 'password';
     service.getToken(username, password);
-    const req = httpTestingController.expectOne('https://niobe3-test.europe-matrix.bg:4222/api/security/authentication/getToken');
+    const req = httpTestingController.expectOne('http://localhost:2222/api/security/authentication/getToken');
     expect(req.request.method).toEqual('POST');
     req.flush
     ({token : 'token'});

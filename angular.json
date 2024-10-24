@@ -29,6 +29,7 @@
               }
             ],
             "styles": [
+              "node_modules/@videogular/ngx-videogular/fonts/videogular.css",
               "src/styles.scss"
             ],
             "scripts": []
@@ -46,8 +47,7 @@
                   "maximumWarning": "2kB",
                   "maximumError": "4kB"
                 }
-              ],
-              "outputHashing": "all"
+              ]
             },
             "development": {
               "optimization": false,
@@ -117,6 +117,7 @@
               }
             ],
             "styles": [
+              "node_modules/@videogular/ngx-videogular/fonts/videogular.css",
               "src/styles.scss"
             ],
             "scripts": [],
@@ -177,6 +178,98 @@
             ],
             "polyfills": [
               "zone.js"
+            ],
+            "scripts": []
+          }
+        }
+      }
+    },
+    "m3-webcomponent": {
+      "projectType": "application",
+      "schematics": {
+        "@schematics/angular:component": {
+          "style": "scss"
+        }
+      },
+      "root": "",
+      "sourceRoot": "src",
+      "prefix": "app",
+      "architect": {
+        "build": {
+          "builder": "@ngx-env/builder:application",
+          "options": {
+            "outputPath": "dist/m3-webcomponent",
+            "index": "src/index.html",
+            "browser": "src/main.webcomponent.ts",
+            "tsConfig": "tsconfig.webcomponent.json",
+            "inlineStyleLanguage": "scss",
+            "assets": [
+              {
+                "glob": "**/*",
+                "input": "public"
+              }
+            ],
+            "styles": [
+              "node_modules/@videogular/ngx-videogular/fonts/videogular.css",
+              "src/styles.scss"
+            ],
+            "scripts": []
+          },
+          "configurations": {
+            "production": {
+              "budgets": [
+                {
+                  "type": "initial",
+                  "maximumWarning": "500kB",
+                  "maximumError": "1MB"
+                },
+                {
+                  "type": "anyComponentStyle",
+                  "maximumWarning": "2kB",
+                  "maximumError": "4kB"
+                }
+              ]
+            },
+            "development": {
+              "optimization": false,
+              "extractLicenses": false,
+              "sourceMap": true
+            }
+          },
+          "defaultConfiguration": "production"
+        },
+        "serve": {
+          "builder": "@ngx-env/builder:dev-server",
+          "configurations": {
+            "production": {
+              "buildTarget": "m3-webcomponent:build:production"
+            },
+            "development": {
+              "buildTarget": "m3-webcomponent:build:development"
+            }
+          },
+          "defaultConfiguration": "development"
+        },
+        "extract-i18n": {
+          "builder": "@ngx-env/builder:extract-i18n"
+        },
+        "test": {
+          "builder": "@ngx-env/builder:karma",
+          "options": {
+            "polyfills": [
+              "zone.js",
+              "zone.js/testing"
+            ],
+            "tsConfig": "tsconfig.spec.json",
+            "inlineStyleLanguage": "scss",
+            "assets": [
+              {
+                "glob": "**/*",
+                "input": "public"
+              }
+            ],
+            "styles": [
+              "src/styles.scss"
             ],
             "scripts": []
           }
