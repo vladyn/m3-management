@@ -200,8 +200,8 @@
           "options": {
             "outputPath": "dist/m3-webcomponent",
             "index": "src/index.html",
-            "browser": "src/main-webcomponent.ts",
-            "tsConfig": "tsconfig.app.json",
+            "browser": "src/main.webcomponent.ts",
+            "tsConfig": "tsconfig.webcomponent.json",
             "inlineStyleLanguage": "scss",
             "assets": [
               {
@@ -275,6 +275,6 @@
           }
         }
       }
-    },
+    }
   }
 }
