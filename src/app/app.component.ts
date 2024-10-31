@@ -14,7 +14,7 @@ import { AudioPlayerComponent } from './audio-player/audio-player.component';
   schemas: [CUSTOM_ELEMENTS_SCHEMA]
 })
 export class AppComponent {
-  @Input() name: string = 'm3-management';
+  @Input() name = 'm3-management';
   public title = signal('');
   src = signal('/assets/audio/E_DarinaD_D_2024-10-07_H_100748_060_CLID_00894553778.wav');
 

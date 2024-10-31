@@ -1,12 +1,6 @@
 import { CommonModule } from '@angular/common';
-import {
-  ChangeDetectorRef,
-  Component,
-  OnInit,
-  Input,
-  SimpleChanges,
-  AfterViewInit,
-} from '@angular/core';
+import { Component, Input, ChangeDetectorRef } from '@angular/core';
+import type { OnInit, SimpleChanges, AfterViewInit } from '@angular/core';
 import { VgCoreModule, VgApiService } from '@videogular/ngx-videogular/core';
 import { VgControlsModule } from '@videogular/ngx-videogular/controls';
 import { VgOverlayPlayModule } from '@videogular/ngx-videogular/overlay-play';
@@ -31,14 +25,14 @@ export class AudioPlayerComponent implements OnInit, AfterViewInit {
   preload = 'auto';
   api: VgApiService = new VgApiService();
   track: TextTrack | any = [];
-  activeCuePoints: ICuePoint[] = [];
+  activeCuePoints: ITextTrackCue[] = [];
   showCuePointManager = true;
   json: JSON = JSON;
   loaded = false;
 
-  @Input() audio_src: string = '';
+  @Input() audio_src = '';
 
-  constructor(private cd: ChangeDetectorRef) {}
+  constructor(private readonly cd: ChangeDetectorRef) {}
 
   onPlayerReady(source: VgApiService) {
     this.api = source;
@@ -53,12 +47,12 @@ export class AudioPlayerComponent implements OnInit, AfterViewInit {
     });
   }
 
-  onEnterCuePoint($event: any) {
-    this.activeCuePoints.push({ id: $event.id, ...JSON.parse($event.text) });
+  onEnterCuePoint($event: ITextTrackCue) {
+    this.activeCuePoints.push({ id: $event.id, text: $event.text });
     this.showCuePointManager = true;
   }
 
-  onExitCuePoint($event: any) {
+  onExitCuePoint($event: TextTrackCue) {
     this.activeCuePoints = this.activeCuePoints.filter(
       (c) => c.id !== $event.id
     );
@@ -79,6 +73,7 @@ export class AudioPlayerComponent implements OnInit, AfterViewInit {
 
   ngOnChanges(changes: SimpleChanges) {
     console.log(changes);
+    // biome-ignore lint/complexity/useLiteralKeys: <explanation>
     const simpleChange = changes['audio_src'];
     if (simpleChange.currentValue !== simpleChange.previousValue) {
       this.sources = [
@@ -97,10 +92,11 @@ interface AudioSource {
   type: string;
 }
 
-interface ICuePoint {
+interface ITextTrackCue {
   id: string;
-  title: string;
-  description: string;
-  src: string;
-  href: string;
+  text: string;
+  href?: string;
+  title?: string;
+  description?: string;
+  src?: string;
 }
