@@ -11,4 +11,7 @@ interface ImportMetaEnv {
   readonly NG_APP_AUTH_TOKEN_LOCAL: string;
   readonly NG_APP_API_URL_TEST: string;
   readonly NG_APP_API_URL_DEV: string;
+  readonly NG_APP_DMS_CLIENT_ID: string;
+  readonly NG_APP_DMS_CLIENT_SECRET: string;
+  readonly NG_APP_DMS_API_URL: string;
 }
