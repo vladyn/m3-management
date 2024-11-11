@@ -1,4 +1,4 @@
-export const urlString = (data: object) => {
+export const urlString = (data: object | null) => {
   if (data == null) { return ""; }
 
   const urlParams = new URLSearchParams();

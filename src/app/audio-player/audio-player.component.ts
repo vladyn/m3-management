@@ -1,10 +1,12 @@
 import { CommonModule } from '@angular/common';
-import { Component, Input, ChangeDetectorRef } from '@angular/core';
+import { Component, Input, ChangeDetectorRef, signal } from '@angular/core';
 import type { OnInit, SimpleChanges, AfterViewInit } from '@angular/core';
 import { VgCoreModule, VgApiService } from '@videogular/ngx-videogular/core';
 import { VgControlsModule } from '@videogular/ngx-videogular/controls';
 import { VgOverlayPlayModule } from '@videogular/ngx-videogular/overlay-play';
 import { VgBufferingModule } from '@videogular/ngx-videogular/buffering';
+import { AuthDmsService } from '../services/auth-dms.service/auth-dms.service';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-audio-player',
@@ -18,8 +20,9 @@ import { VgBufferingModule } from '@videogular/ngx-videogular/buffering';
     VgBufferingModule,
     CommonModule,
   ],
-  providers: [VgApiService],
+  providers: [VgApiService, AuthDmsService],
 })
+
 export class AudioPlayerComponent implements OnInit, AfterViewInit {
   sources: AudioSource[] = [];
   preload = 'auto';
@@ -29,13 +32,18 @@ export class AudioPlayerComponent implements OnInit, AfterViewInit {
   showCuePointManager = true;
   json: JSON = JSON;
   loaded = false;
+  cabinets = signal<Cabinet[]>([]);
+  cabinetContents: Cabinet[] = [];
 
   @Input() audio_src = '';
 
-  constructor(private readonly cd: ChangeDetectorRef) {}
+  constructor(private readonly cd: ChangeDetectorRef, private dmsService: AuthDmsService) {}
 
   onPlayerReady(source: VgApiService) {
     this.api = source;
+    this.dmsService.getCabinets().subscribe((response) => {
+      this.cabinets.set(response);
+    });
     this.api.getDefaultMedia().subscriptions.canPlay.subscribe(() => {
       this.track = this.api.getDefaultMedia().textTracks[0];
       this.loaded = true;
@@ -63,7 +71,7 @@ export class AudioPlayerComponent implements OnInit, AfterViewInit {
     this.api.play();
   }
 
-  ngOnInit() {}
+  ngOnInit() { }
 
   ngAfterViewInit(): void {
     setTimeout(() => {
@@ -72,7 +80,6 @@ export class AudioPlayerComponent implements OnInit, AfterViewInit {
   }
 
   ngOnChanges(changes: SimpleChanges) {
-    console.log(changes);
     // biome-ignore lint/complexity/useLiteralKeys: <explanation>
     const simpleChange = changes['audio_src'];
     if (simpleChange.currentValue !== simpleChange.previousValue) {
@@ -84,6 +91,10 @@ export class AudioPlayerComponent implements OnInit, AfterViewInit {
       ];
       this.cd.detectChanges();
     }
+  }
+
+  onCabinetClick(cabinet: Cabinet) {
+    console.log(cabinet);
   }
 }
 
@@ -99,4 +110,12 @@ interface ITextTrackCue {
   title?: string;
   description?: string;
   src?: string;
+}
+
+interface Cabinet {
+  id: string;
+  name: string;
+  type: string;
+  iconName: string;
+  iconColor: string;
 }

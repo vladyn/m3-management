@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaderResponse, HttpHeaders } from '@angular/common/http';
 import { environment } from '../../../environment';
 import { urlString } from '../../utils/helpers';
+import { Observable } from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
@@ -10,6 +11,9 @@ export class AuthDmsService {
   constructor(private http: HttpClient) { }
 
   getToken() {
+    if (this.isTokenExist()) {
+      return localStorage.getItem('token_dms');
+    }
     const requestBody: Request = {
         client_id: environment.client_id,
         client_secret: environment.client_secret,
@@ -18,10 +22,28 @@ export class AuthDmsService {
     };
     const headers = new HttpHeaders().set('Content-Type', 'application/x-www-form-urlencoded');
     const options = { headers };
-    return this.http.post(`${environment.dms_api_url}/connect/token?grant_type=client_credentials`, urlString(requestBody), options).subscribe((response) => {
-      console.log(response);
+    return this.http.post<Response> (`${environment.dms_api_url}/connect/token?grant_type=client_credentials`, urlString(requestBody), options).subscribe((response) => {
+      if (response['access_token']) {
+        this.setToken(response['access_token']); // TODO: validate the token before setting it
+      }
     });
  }
+
+ getCabinets(): Observable<any> {
+   return this.http.get(`${environment.dms_api_url}/api/v1.4/cabinets`);
+ }
+
+ getContents() {
+  return this.http.get(`${environment.dms_api_url}/content/v1.4`);
+}
+
+  isTokenExist() {
+    return localStorage.getItem('token_dms') ? true : false;
+  }
+
+  setToken(token: string) {
+    localStorage.setItem('token_dms', token);
+  }
 }
 
 interface Request {
@@ -29,4 +51,10 @@ interface Request {
   client_secret: string,
   client_id: string,
   scope: string,
+}
+
+interface Response {
+  access_token: string,
+  token_type: string,
+  expires_in: number,
 }

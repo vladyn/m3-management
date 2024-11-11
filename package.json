@@ -23,6 +23,7 @@
     "@angular/router": "^18.2.0",
     "@videogular/ngx-videogular": "^10.0.1",
     "crypto-js": "^4.2.0",
+    "graceful-fs": "^4.2.11",
     "ngx-build-plus": "^18.0.0",
     "rxjs": "~7.8.0",
     "tslib": "^2.3.0"

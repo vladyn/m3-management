@@ -2,6 +2,7 @@ import { TestBed } from '@angular/core/testing';
 import { HttpClientTestingModule, HttpTestingController } from '@angular/common/http/testing';
 import { AuthDmsService } from './auth-dms.service';
 import { HttpClient } from '@angular/common/http';
+import { Observable } from 'rxjs';
 
 describe('AuthDmsService', () => {
   let service: AuthDmsService;
@@ -14,6 +15,10 @@ describe('AuthDmsService', () => {
     });
     httpClient = TestBed.get(HttpClient);
     httpTestingController = TestBed.get(HttpTestingController);
+    spyOn(httpClient, 'get').and.returnValue(new Observable(observer => {
+      observer.next({});
+      observer.complete();
+    }));
   });
 
   it('should be created', () => {
@@ -29,5 +34,14 @@ describe('AuthDmsService', () => {
     req.flush
     ({token : 'token'});
     httpTestingController.verify();
+  });
+
+  it('should get Cabinets', () => {
+    service = new AuthDmsService(httpClient);
+    service.getCabinets()
+      .subscribe((response) => {
+        expect(response).toEqual({});
+      });
+    expect(httpClient.get).toHaveBeenCalled();
   });
 });
