@@ -33,9 +33,21 @@ export class AuthDmsService {
    return this.http.get(`${environment.dms_api_url}/api/v1.4/cabinets`);
  }
 
- getContents() {
-  return this.http.get(`${environment.dms_api_url}/content/v1.4`);
-}
+  getContents() {
+    return this.http.get(`${environment.dms_api_url}/content/v1.4`);
+  }
+
+  getFileMetadata(fileId: number = 145) {
+    return this.http.get(`${environment.dms_api_url}/api/v1.4/items/${fileId}/_metadata`);
+  }
+
+  getFileBlob(
+    uniformName: string = 'E_ValentinaY_D_2024-11-05_H_080017_393_CLID_00898869786.wav (ID 00145).wav',
+    path: string = 'TestQuantumDMS\\Summer campaign',
+  ) {
+    const currentPath = path.replace(/\\/g, '/');
+    return this.http.get(`${environment.dms_api_url}/content/v1.4/${currentPath}/${uniformName}/_blob`, { responseType: 'blob' });
+  }
 
   isTokenExist() {
     return localStorage.getItem('token_dms') ? true : false;
