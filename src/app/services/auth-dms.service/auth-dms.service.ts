@@ -42,7 +42,7 @@ export class AuthDmsService {
   }
 
   getFileBlob(
-    uniformName: string = 'E_ValentinaY_D_2024-11-05_H_080017_393_CLID_00898869786.wav (ID 00145).wav',
+    uniformName: string = 'E_ValentinaY_D_2024-11-05_H_080017_393_CLID_XXXXXXXXXXX.wav (ID 00145).wav',
     path: string = 'TestQuantumDMS\\Summer campaign',
   ) {
     const currentPath = path.replace(/\\/g, '/');
