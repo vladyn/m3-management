@@ -16,7 +16,7 @@ import { AudioPlayerComponent } from './audio-player/audio-player.component';
 export class AppComponent {
   @Input() name = 'm3-management';
   public title = signal('');
-  src = signal('145'); //'/assets/audio/E_DarinaD_D_2024-10-07_H_100748_060_CLID_00894553778.wav'
+  src = signal(145); //'/assets/audio/E_DarinaD_D_2024-10-07_H_100748_060_CLID_00894553778.wav'
 
   constructor(injector: Injector) {
     this.title.set('m3-management');

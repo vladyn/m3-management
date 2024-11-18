@@ -62,7 +62,7 @@ describe('AuthDmsService', () => {
 
   it('should get File Metadata', () => {
     service = new AuthDmsService(httpClient);
-    service.getFileMetadata()
+    service.getFileMetadata(145)
       .subscribe((response) => {
         expect(response).toEqual({});
       });

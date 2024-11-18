@@ -34,6 +34,10 @@
   </audio>
 </vg-player>
 
+<div class="errors" *ngFor="let error of errors">
+  <p>{{ error?.message }}</p> 
+</div>
+
 <div class="cue-point-manager-layer" id="cuePoints" *ngIf="showCuePointManager">
   <div class="cue-list" id="queList" *ngIf="track?.cues?.length > 0">
     <table class="cue-table">

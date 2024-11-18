@@ -6,7 +6,7 @@ import { VgControlsModule } from '@videogular/ngx-videogular/controls';
 import { VgOverlayPlayModule } from '@videogular/ngx-videogular/overlay-play';
 import { VgBufferingModule } from '@videogular/ngx-videogular/buffering';
 import { AuthDmsService } from '../services/auth-dms.service/auth-dms.service';
-import { Subscription } from 'rxjs';
+import { Subscription, catchError, map } from 'rxjs';
 
 @Component({
   selector: 'app-audio-player',
@@ -36,8 +36,9 @@ export class AudioPlayerComponent implements OnInit, AfterViewInit {
   src = signal<string>('');
   type = signal<string>('audio/wav');
   audio = signal<HTMLAudioElement>(document.createElement('audio'));
+  errors: {message: string}[] = [];
 
-  @Input() audio_id = '';
+  @Input() audio_id = 0;
 
   constructor(private readonly cd: ChangeDetectorRef, private dmsService: AuthDmsService) {}
 
@@ -88,9 +89,24 @@ export class AudioPlayerComponent implements OnInit, AfterViewInit {
     const simpleChange = changes['audio_id'];
 
     if (simpleChange.currentValue !== simpleChange.previousValue) {
-      this.dmsService.getFileMetadata().subscribe((data) => {
-        console.log(data);
-        this.dmsService.getFileBlob().subscribe((response: Blob) => {
+      this.dmsService.getFileMetadata(this.audio_id)
+      .pipe(
+        catchError((error) => {
+          this.errors.push(error);
+          this.cd.detectChanges();
+          throw error;
+        })
+      )
+      .subscribe((data: any) => {
+        this.dmsService.getFileBlob(data.uniformName, data.metadata.find((item: any) => item.internalName === 'Path')?.value)
+        .pipe(
+          catchError((error) => {
+            this.errors.push(error);
+            this.cd.detectChanges();
+            throw error;
+          })
+        )
+        .subscribe((response) => {
           const url = URL.createObjectURL(response);
           this.type.set(response.type);
           this.src.set(url);
@@ -98,8 +114,6 @@ export class AudioPlayerComponent implements OnInit, AfterViewInit {
           this.cd.detectChanges();
         });
       });
-
-      this.cd.detectChanges();
     }
   }
 }
@@ -120,3 +134,9 @@ interface Cabinet {
   iconName: string;
   iconColor: string;
 }
+
+interface ResponseAsBlob extends Blob {
+  ok: boolean;
+  message: string;
+}
+
