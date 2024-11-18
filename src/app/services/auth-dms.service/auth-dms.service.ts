@@ -15,7 +15,7 @@ import { map } from 'rxjs/operators';
 export class AuthDmsService {
   constructor(private http: HttpClient) {}
 
-  getToken(): Observable<string | null> {
+  getToken(): Observable<string> {
     const requestBody: Request = {
       client_id: environment.client_id,
       client_secret: environment.client_secret,
@@ -44,28 +44,21 @@ export class AuthDmsService {
       );
   }
 
-  isTokenExist(): Observable<string | null> {
+  isTokenExist(): Observable<any> {
     const tokenTime = localStorage.getItem('token_dms_time');
+    const token = localStorage.getItem('token_dms');
     if (tokenTime) {
       const currentTime = new Date().getTime();
       const tokenTimeInt = parseInt(tokenTime, 10);
       if (currentTime - tokenTimeInt > 86400000) {
         return this.getToken();
       }
-    } else {
-      this.getToken().subscribe({
-        next: (token) => {
-          if (token) {
-            this.setToken(token);
-            return of(token);
-          }
-          return this.getToken();
-        },
-        error: (error) => {
-          throw error;
-        }
-      });
     }
+
+    if (!token) {
+      return this.getToken();
+    }
+
     return of(localStorage.getItem('token_dms'));
   }
 
@@ -80,10 +73,7 @@ export class AuthDmsService {
     );
   }
 
-  getFileBlob(
-    uniformName: string = 'E_ValentinaY_D_2024-11-05_H_080017_393_CLID_XXXXXXXXXXX.wav (ID 00145).wav',
-    path: string = 'TestQuantumDMS\\Summer campaign'
-  ): Observable<Blob> {
+  getFileBlob(uniformName: string, path: string): Observable<Blob> {
     const currentPath = path.replace(/\\/g, '/');
     return this.http.get(
       `${environment.dms_api_url}/content/v1.4/${currentPath}/${uniformName}/_blob`,
