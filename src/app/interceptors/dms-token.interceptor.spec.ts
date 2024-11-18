@@ -42,13 +42,12 @@ describe('DmsTokenInterceptor', () => {
         });
 
     expect(interceptor.intercept).toBeTruthy();
-    if (dmsService.isTokenExist()) {
-      expect(localStorage.getItem('token_dms')).toEqual('token');
-    } else {
-      expect(localStorage.getItem('token_dms')).toBeNull();
-      const req = httpTestingController.expectOne('https://dms:443/connect/token?grant_type=client_credentials');    
+    dmsService.isTokenExist().subscribe((response) => {
+      expect(response).toEqual({});
+      const req = httpTestingController.expectOne('https://dms:443/connect/token?grant_type=client_credentials');
       expect(req.request.method).toEqual('POST');
       expect(req.request.url).toEqual('https://dms:443/connect/token?grant_type=client_credentials');
-    }
+    });
+    expect(localStorage.getItem('token_dms')).toBeNull();
   });
 });
