@@ -35,16 +35,16 @@ export class AudioPlayerComponent implements OnInit, AfterViewInit {
   cabinetContents: Cabinet[] = [];
   src = signal<string>('');
   type = signal<string>('audio/wav');
-  audio_element = signal<HTMLAudioElement>(document.createElement('audio'));
+  audio = signal<HTMLAudioElement>(document.createElement('audio'));
   errors: {message: string}[] = [];
 
-  @Input() audio = 0;
+  @Input() audio_id = 0;
 
   constructor(private readonly cd: ChangeDetectorRef, private dmsService: AuthDmsService) {}
 
   onPlayerReady(source: VgApiService) {
     this.api = source;
-
+   
     this.api.getDefaultMedia().subscriptions.canPlay.subscribe(() => {
       this.track = this.api.getDefaultMedia().textTracks[0];
       this.loaded = true;
@@ -72,10 +72,10 @@ export class AudioPlayerComponent implements OnInit, AfterViewInit {
     this.api.play();
   }
 
-  ngOnInit() {
+  ngOnInit() { 
     // Select the audio element
-    const audio = document.querySelector('audio') ?? this.audio_element();
-    this.audio_element.set(audio);
+    const audio = document.querySelector('audio') ?? this.audio();
+    this.audio.set(audio);
   }
 
   ngAfterViewInit(): void {
@@ -86,10 +86,10 @@ export class AudioPlayerComponent implements OnInit, AfterViewInit {
 
   ngOnChanges(changes: SimpleChanges) {
     // biome-ignore lint/complexity/useLiteralKeys: <explanation>
-    const simpleChange = changes['audio'];
+    const simpleChange = changes['audio_id'];
 
     if (simpleChange.currentValue !== simpleChange.previousValue) {
-      this.dmsService.getFileMetadata(this.audio)
+      this.dmsService.getFileMetadata(this.audio_id)
       .pipe(
         catchError((error) => {
           this.errors.push(error);
@@ -110,7 +110,7 @@ export class AudioPlayerComponent implements OnInit, AfterViewInit {
           const url = URL.createObjectURL(response);
           this.type.set(response.type);
           this.src.set(url);
-          this.audio_element().load();
+          this.audio().load();
           this.cd.detectChanges();
         });
       });
