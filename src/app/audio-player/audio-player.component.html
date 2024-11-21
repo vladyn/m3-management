@@ -19,8 +19,8 @@
       <vg-mute></vg-mute>
   </vg-controls>
 
-  <audio #media [vgMedia]="$any(media)" id="myAudio" preload=[preload]>
-      <source *ngFor="let audio of sources" src="{{ audio_src }}" [type]="audio.type">
+  <audio #media [vgMedia]="$any(media)" id="myAudio" preload="{{ preload }}" crossorigin>
+      <source [src]="src()" [type]="type()">
       <track
       src="assets/data/Downloaded_transcriptVVV.vtt"
       kind="metadata"
@@ -33,6 +33,10 @@
     />
   </audio>
 </vg-player>
+
+<div class="errors" *ngFor="let error of errors">
+  <p>{{ error?.message }}</p> 
+</div>
 
 <div class="cue-point-manager-layer" id="cuePoints" *ngIf="showCuePointManager">
   <div class="cue-list" id="queList" *ngIf="track?.cues?.length > 0">

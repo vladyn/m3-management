@@ -17,7 +17,6 @@ describe('CryptoServiceService', () => {
   it('should encrypt data', () => {
     const data = 'data';
     const encryptedData = service.encryptData(data, key);
-    console.log(encryptedData);
     expect(encryptedData).toBeTruthy();
   });
 

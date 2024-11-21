@@ -13,9 +13,7 @@ export class AuthServiceService {
     const requestBody: Request = {client_id: 'matrix3ui', username, password };
     const headers = new HttpHeaders().set('Content-Type', 'application/x-www-form-urlencoded');
     const options = { headers };
-    return this.http.post(environment.authToken, urlString(requestBody), options).subscribe((response) => {
-      console.log(response);
-    });
+    return this.http.post(environment.authToken, urlString(requestBody), options).subscribe((response) => response);
  }
 }
 
