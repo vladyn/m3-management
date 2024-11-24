@@ -2,6 +2,7 @@ import { ApplicationConfig, provideZoneChangeDetection, provideExperimentalZonel
 import { provideRouter } from '@angular/router';
 import { HTTP_INTERCEPTORS, provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
 import { DmsTokenInterceptor } from '../app/interceptors/dms-token.interceptor';
+import { DmsMetadataInterceptor } from '../app/interceptors/dms-metadata.interceptor';
 
 import { routes } from './app.routes';
 
@@ -10,6 +11,7 @@ export const appConfig: ApplicationConfig = {
     provideExperimentalZonelessChangeDetection(),
     provideRouter(routes),
     provideHttpClient(withInterceptorsFromDi()),
-    { provide: HTTP_INTERCEPTORS, useClass: DmsTokenInterceptor, multi: true }
+    { provide: HTTP_INTERCEPTORS, useClass: DmsTokenInterceptor, multi: true },
+    { provide: HTTP_INTERCEPTORS, useClass: DmsMetadataInterceptor, multi: true }
   ]
 };

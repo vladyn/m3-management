@@ -1,3 +1,16 @@
+<div class="grid-container">
+  <div class="grid-x grid-padding-x" *ngFor="let data of model()">
+    <div class="cell small-12">
+      <div class="card" *ngFor="let meta of data | keyvalue">
+        <div class="card-divider">
+          <h4>{{ meta.key }}</h4>
+        </div>
+        <div class="card-section">
+          <p>{{ meta.value }}</p>
+        </div>
+    </div>
+  </div>
+</div>
 <vg-player
   (onPlayerReady)="onPlayerReady($event)"
   vg-crossorigin="ctrl.config.crossorigin"
@@ -22,7 +35,7 @@
   <audio #media [vgMedia]="$any(media)" id="myAudio" preload="{{ preload }}" crossorigin>
       <source [src]="src()" [type]="type()">
       <track
-      src="assets/data/Downloaded_transcriptVVV.vtt"
+      [src]="transcript_src()"
       kind="metadata"
       label="Cue Points"
       default
@@ -35,7 +48,7 @@
 </vg-player>
 
 <div class="errors" *ngFor="let error of errors">
-  <p>{{ error?.message }}</p> 
+  <p><i class="fa-solid fa-triangle-exclamation"></i> {{ error?.message }}</p>
 </div>
 
 <div class="cue-point-manager-layer" id="cuePoints" *ngIf="showCuePointManager">
@@ -55,23 +68,12 @@
           <td>{{ cue.endTime }}</td>
           <td class="json">{{ cue.text }}</td>
           <td class="actions">
-            <button type="button" class="eos-button tertiary" (click)="onClickGo(cue)">Go to</button>
+            <button type="button" class="eos-button tertiary" (click)="onClickGo(cue)">
+              <i class="fa-solid fa-play"></i>
+            </button>
           </td>
         </tr>
       </tbody>
     </table>
   </div>
 </div>
-<ng-container *ngIf="activeCuePoints">
-  <div *ngFor="let cuePointData of activeCuePoints" class="info-layer">
-    <h3>
-      <a [href]="cuePointData?.href" target="_blank">{{
-        cuePointData?.title
-      }}</a>
-    </h3>
-    <p>
-      <img [src]="cuePointData?.src" />
-      {{ cuePointData?.description }}
-    </p>
-  </div>
-</ng-container>
