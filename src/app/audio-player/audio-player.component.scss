@@ -4,8 +4,8 @@ $player-height: 40px;
 
 .player-wrapper {
   display: grid;
-  grid-template-columns: 1fr 1fr;
-  grid-template-rows: minmax(0, 250px) minmax(0, 350px);
+  grid-template-columns: 1fr;
+  grid-template-rows: minmax(0, 118px) minmax(20px, auto);
   grid-column-gap: 4px;
   justify-items: stretch;
   font-size: small;
