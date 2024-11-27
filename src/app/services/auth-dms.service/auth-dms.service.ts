@@ -6,8 +6,7 @@ import {
 } from '@angular/common/http';
 import { environment } from '../../../environment';
 import { urlString } from '../../utils/helpers';
-import { Observable, catchError, of } from 'rxjs';
-import { map } from 'rxjs/operators';
+import { Observable, catchError, of, map } from 'rxjs';
 
 @Injectable({
   providedIn: 'root',
@@ -78,6 +77,18 @@ export class AuthDmsService {
     return this.http.get(
       `${environment.dms_api_url}/content/v1.4/${currentPath}/${uniformName}/_blob`,
       { responseType: 'blob' }
+    );
+  }
+
+  getFileTranscript(fileId: number): Observable<any> {
+    const headers = new HttpHeaders().set(
+      'Accept',
+      'text/vtt'
+    );
+
+    return this.http.get(
+      `${environment.dms_api_url}/api/v1.4/items/${fileId}/_transcript`,
+      { responseType: 'blob', headers }
     );
   }
 }

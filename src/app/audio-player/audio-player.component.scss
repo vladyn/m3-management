@@ -1,0 +1,95 @@
+$ready-color: #31171f;
+$playing-color: #ea0029;
+$player-height: 40px;
+
+.player-wrapper {
+  display: grid;
+  grid-template-columns: 1fr;
+  grid-template-rows: minmax(0, 118px) minmax(20px, auto);
+  grid-column-gap: 4px;
+  justify-items: stretch;
+  font-size: small;
+}
+
+.grid-container {
+  display: grid;
+  grid-auto-flow: column;
+  grid-gap: 2px;
+  column-gap: 2px;
+  grid-template-columns: 1fr 1fr;
+  grid-template-rows: 1fr;
+  grid-column-gap: 4px;
+  justify-items: start;
+}
+
+.cue-point-manager-layer {
+  max-height: 450px;
+  overflow-y: auto;
+}
+
+vg-player {
+  background-color: transparent;
+}
+vg-controls {
+  background-color: $ready-color;
+}
+
+vg-controls,
+vg-scrub-bar,
+vg-play-pause,
+vg-time-display,
+vg-mute,
+vg-playback-button {
+  height: $player-height;
+  line-height: $player-height;
+}
+
+.playing {
+  background-color: $playing-color;
+}
+
+.paused {
+  background-color: $ready-color;
+}
+
+.ended {
+  background-color: $ready-color;
+}
+
+.grid-x:nth-child(2n + 1) {
+  background-color: #f0f0f0;
+  width: 100%;
+}
+
+.grid-cell {
+  h4 {
+    font-size: 80%;
+  }
+  p {
+    font-size: 90%;
+  }
+}
+
+table.cue-table {
+  .titles-header {
+    text-align: left;
+    td {
+      padding: 0.5em;
+      text-align: left;
+    }
+  }
+  .cue-row:hover {
+    background-color: #a6a9b1;
+    cursor: pointer;
+  }
+}
+
+.search-bar {
+  margin-bottom: 1em;
+  margin-top: 1em;
+  input {
+    width: fit-content;
+    padding: 0.5em;
+    font-size: 1em;
+  }
+}

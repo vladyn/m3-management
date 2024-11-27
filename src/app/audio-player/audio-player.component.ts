@@ -1,3 +1,4 @@
+import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { Component, Input, ChangeDetectorRef, signal } from '@angular/core';
 import type { OnInit, SimpleChanges, AfterViewInit } from '@angular/core';
@@ -19,6 +20,7 @@ import { Subscription, catchError, map } from 'rxjs';
     VgOverlayPlayModule,
     VgBufferingModule,
     CommonModule,
+    FormsModule,
   ],
   providers: [VgApiService, AuthDmsService],
 })
@@ -34,9 +36,13 @@ export class AudioPlayerComponent implements OnInit, AfterViewInit {
   cabinets = signal<Cabinet[]>([]);
   cabinetContents: Cabinet[] = [];
   src = signal<string>('');
+  transcript_src = signal<string>('');
   type = signal<string>('audio/wav');
   audio = signal<HTMLAudioElement>(document.createElement('audio'));
   errors: {message: string}[] = [];
+  model = signal<Array<any>> ([] as any);
+  playerStateCssClass = signal<string>('');
+  searchTerm = signal<string>('type here to search');
 
   @Input() audio_id = 0;
 
@@ -44,15 +50,23 @@ export class AudioPlayerComponent implements OnInit, AfterViewInit {
 
   onPlayerReady(source: VgApiService) {
     this.api = source;
-   
+
     this.api.getDefaultMedia().subscriptions.canPlay.subscribe(() => {
       this.track = this.api.getDefaultMedia().textTracks[0];
       this.loaded = true;
     });
 
+    this.api.getDefaultMedia().subscriptions.playing.subscribe(() => {
+      this.playerStateCssClass.set('playing');
+    });
+
+    this.api.getDefaultMedia().subscriptions.pause.subscribe(() => {
+      this.playerStateCssClass.set('paused');
+    });
+
     this.api.getDefaultMedia().subscriptions.ended.subscribe(() => {
-      // Set the audio to the beginning
       this.api.getDefaultMedia().currentTime = 0;
+      this.playerStateCssClass.set('ended');
     });
   }
 
@@ -72,8 +86,11 @@ export class AudioPlayerComponent implements OnInit, AfterViewInit {
     this.api.play();
   }
 
-  ngOnInit() { 
-    // Select the audio element
+  search() {
+    this.api.seekTime(this.track.cues[0].startTime);
+  }
+
+  ngOnInit() {
     const audio = document.querySelector('audio') ?? this.audio();
     this.audio.set(audio);
   }
@@ -95,10 +112,14 @@ export class AudioPlayerComponent implements OnInit, AfterViewInit {
           this.errors.push(error);
           this.cd.detectChanges();
           throw error;
+        }),
+        map((data: any) => {
+          this.model.set(data.metadata);
+          return data;
         })
       )
       .subscribe((data: any) => {
-        this.dmsService.getFileBlob(data.uniformName, data.metadata.find((item: any) => item.internalName === 'Path')?.value)
+        this.dmsService.getFileBlob(data.name, data.path)
         .pipe(
           catchError((error) => {
             this.errors.push(error);
@@ -111,6 +132,21 @@ export class AudioPlayerComponent implements OnInit, AfterViewInit {
           this.type.set(response.type);
           this.src.set(url);
           this.audio().load();
+          this.errors.length = 0;
+          this.cd.detectChanges();
+        });
+
+        this.dmsService.getFileTranscript(this.audio_id)
+        .pipe(
+          catchError((error) => {
+            this.errors.push(error);
+            this.cd.detectChanges();
+            throw error;
+          })
+        )
+        .subscribe((response) => {
+          const url = URL.createObjectURL(response);
+          this.transcript_src.set(url);
           this.cd.detectChanges();
         });
       });
@@ -133,10 +169,5 @@ interface Cabinet {
   type: string;
   iconName: string;
   iconColor: string;
-}
-
-interface ResponseAsBlob extends Blob {
-  ok: boolean;
-  message: string;
 }
 
