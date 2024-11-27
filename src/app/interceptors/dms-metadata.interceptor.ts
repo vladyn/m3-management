@@ -32,7 +32,7 @@ export class DmsMetadataInterceptor implements HttpInterceptor {
         const result = metadata.metadata.reduce((acc: any[], item: any) => {
           for (const [key, value] of matchingKeys) {
             if (item.internalName === key) {
-              item.value ? acc.push({ [value]: item.value }) : acc.push({ [value]: item.identities });
+              item.value ? acc.push({ [value]: item.value }) : acc.push({ [value]: item.identities[0] });
             }
           }
           return acc;
@@ -44,6 +44,7 @@ export class DmsMetadataInterceptor implements HttpInterceptor {
           metadata: result,
           path,
         };
+        console.log(patchedResponse);
         return response.clone({ body: patchedResponse });
       })
     );
@@ -52,21 +53,7 @@ export class DmsMetadataInterceptor implements HttpInterceptor {
 
 const matchingKeys = new Map(
   [
-    ['Name', 'uniformName'],
-    ['File size', 'size'],
-    ['Extension', 'type'],
-    ['Status', 'status'],
-    ['Content type', 'document'],
-    ['File name with extension', 'name'],
-    ['File name without extension', 'name'],
     ['Created', 'created'],
-    ['Created by', 'createdBy'],
-    ['Modified', 'modified'],
-    ['Modified by', 'modifiedBy'],
-    ['Path', 'path'],
-    ['File type', 'fileType'],
-    ['Cabinet ID', 'cabinetId'],
-    ['processing_status', 'processingStatus'],
-    ['autoscore_result', 'autoscoreResult']
+    ['Created by', 'createdBy']
   ]
 );
