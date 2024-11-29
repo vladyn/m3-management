@@ -95,12 +95,6 @@
     >
       <div class="cue-list" id="queList" *ngIf="track?.cues?.length > 0">
         <table class="cue-table">
-          <thead>
-            <tr class="cue-header-row">
-              <th>Start</th>
-              <th class="titles-header">Text</th>
-            </tr>
-          </thead>
           <tbody>
             <tr
               *ngFor="let cue of track?.cues"
