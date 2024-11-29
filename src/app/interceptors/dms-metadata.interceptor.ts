@@ -44,7 +44,6 @@ export class DmsMetadataInterceptor implements HttpInterceptor {
           metadata: result,
           path,
         };
-        console.log(patchedResponse);
         return response.clone({ body: patchedResponse });
       })
     );

@@ -1,6 +1,7 @@
+import { filter } from 'rxjs/operators';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
-import { Component, Input, ChangeDetectorRef, signal } from '@angular/core';
+import { Component, Input, ChangeDetectorRef, signal, ViewChild, ElementRef } from '@angular/core';
 import type { OnInit, SimpleChanges, AfterViewInit } from '@angular/core';
 import { VgCoreModule, VgApiService } from '@videogular/ngx-videogular/core';
 import { VgControlsModule } from '@videogular/ngx-videogular/controls';
@@ -8,6 +9,7 @@ import { VgOverlayPlayModule } from '@videogular/ngx-videogular/overlay-play';
 import { VgBufferingModule } from '@videogular/ngx-videogular/buffering';
 import { AuthDmsService } from '../services/auth-dms.service/auth-dms.service';
 import { Subscription, catchError, map } from 'rxjs';
+import { v4 as uuidv4 } from 'uuid';
 
 @Component({
   selector: 'app-audio-player',
@@ -43,8 +45,11 @@ export class AudioPlayerComponent implements OnInit, AfterViewInit {
   model = signal<Array<any>> ([] as any);
   playerStateCssClass = signal<string>('');
   searchTerm = signal<string>('type here to search');
+  patchedCues: VTTCue[] = [];
+  currentRow: HTMLTableRowElement | null | unknown = null;
 
   @Input() audio_id = 0;
+  @ViewChild('cues', { static: false }) cuesTable!: ElementRef;
 
   constructor(private readonly cd: ChangeDetectorRef, private dmsService: AuthDmsService) {}
 
@@ -53,6 +58,10 @@ export class AudioPlayerComponent implements OnInit, AfterViewInit {
 
     this.api.getDefaultMedia().subscriptions.canPlay.subscribe(() => {
       this.track = this.api.getDefaultMedia().textTracks[0];
+      this.patchedCues = (Array.from(this.track.cues) as VTTCue[]).map((cue: VTTCue) => {
+        cue.id = uuidv4();
+        return cue;
+      });
       this.loaded = true;
     });
 
@@ -71,14 +80,23 @@ export class AudioPlayerComponent implements OnInit, AfterViewInit {
   }
 
   onEnterCuePoint($event: ITextTrackCue) {
-    this.activeCuePoints.push({ id: $event.id, text: $event.text });
+    this.activeCuePoints.push({ id: uuidv4(), text: $event.text });
     this.showCuePointManager = true;
+    this.cuesTable.nativeElement.scrollIntoView({ behavior: 'smooth' });
+    this.currentRow = Array.from(this.cuesTable.nativeElement.querySelectorAll('tr')).find((tr: any) => tr.id === $event.id);
+    if (this.currentRow instanceof HTMLTableRowElement) {
+      this.currentRow.scrollIntoView({ behavior: 'smooth' });
+      this.currentRow.classList.add('highlight');
+    }
   }
 
   onExitCuePoint($event: TextTrackCue) {
     this.activeCuePoints = this.activeCuePoints.filter(
       (c) => c.id !== $event.id
     );
+    if (this.currentRow instanceof HTMLTableRowElement) {
+      this.currentRow.classList.remove('highlight');
+    }
   }
 
   onClickGo(cue: TextTrackCue) {
