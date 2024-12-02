@@ -78,10 +78,8 @@ table.cue-table {
     background-color: $romw-highlighted;
     cursor: pointer;
   }
-  .cue-row.highlight {
-    td.time {
-      background-color: $romw-highlighted;
-    }
+  .cue-row.highlighted {
+    color: $playing-color;
   }
 }
 

@@ -1,4 +1,3 @@
-import { filter } from 'rxjs/operators';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { Component, Input, ChangeDetectorRef, signal, ViewChild, ElementRef } from '@angular/core';
@@ -8,8 +7,15 @@ import { VgControlsModule } from '@videogular/ngx-videogular/controls';
 import { VgOverlayPlayModule } from '@videogular/ngx-videogular/overlay-play';
 import { VgBufferingModule } from '@videogular/ngx-videogular/buffering';
 import { AuthDmsService } from '../services/auth-dms.service/auth-dms.service';
-import { Subscription, catchError, map } from 'rxjs';
+import { catchError, map } from 'rxjs';
 import { v4 as uuidv4 } from 'uuid';
+import {
+  DEFAULT_TRANSCRIPT_STATE_CSS_CLASS,
+  DEFAULT_AUDIO_TYPE,
+  DEFAULT_SEARCH_TERM,
+  DEFAULT_PRELOAD,
+  SCROLL_SETTINGS
+} from '../../enums';
 
 @Component({
   selector: 'app-audio-player',
@@ -28,7 +34,7 @@ import { v4 as uuidv4 } from 'uuid';
 })
 
 export class AudioPlayerComponent implements OnInit, AfterViewInit {
-  preload = 'auto';
+  preload = DEFAULT_PRELOAD;
   api: VgApiService = new VgApiService();
   track: TextTrack | any = [];
   activeCuePoints: ITextTrackCue[] = [];
@@ -39,12 +45,12 @@ export class AudioPlayerComponent implements OnInit, AfterViewInit {
   cabinetContents: Cabinet[] = [];
   src = signal<string>('');
   transcript_src = signal<string>('');
-  type = signal<string>('audio/wav');
+  type = signal<string>(DEFAULT_AUDIO_TYPE);
   audio = signal<HTMLAudioElement>(document.createElement('audio'));
   errors: {message: string}[] = [];
   model = signal<Array<any>> ([] as any);
   playerStateCssClass = signal<string>('');
-  searchTerm = signal<string>('type here to search');
+  searchTerm = signal<string>(DEFAULT_SEARCH_TERM);
   patchedCues: VTTCue[] = [];
   currentRow: HTMLTableRowElement | null | unknown = null;
 
@@ -82,11 +88,11 @@ export class AudioPlayerComponent implements OnInit, AfterViewInit {
   onEnterCuePoint($event: ITextTrackCue) {
     this.activeCuePoints.push({ id: uuidv4(), text: $event.text });
     this.showCuePointManager = true;
-    this.cuesTable.nativeElement.scrollIntoView({ behavior: 'smooth' });
+    this.cuesTable.nativeElement.scrollIntoView({ behavior: SCROLL_SETTINGS.scrollBehavior });
     this.currentRow = Array.from(this.cuesTable.nativeElement.querySelectorAll('tr')).find((tr: any) => tr.id === $event.id);
     if (this.currentRow instanceof HTMLTableRowElement) {
-      this.currentRow.scrollIntoView({ behavior: 'smooth' });
-      this.currentRow.classList.add('highlight');
+      this.currentRow.scrollIntoView({ behavior: SCROLL_SETTINGS.scrollBehavior as ScrollBehavior });
+      this.currentRow.classList.add(DEFAULT_TRANSCRIPT_STATE_CSS_CLASS);
     }
   }
 
@@ -94,14 +100,19 @@ export class AudioPlayerComponent implements OnInit, AfterViewInit {
     this.activeCuePoints = this.activeCuePoints.filter(
       (c) => c.id !== $event.id
     );
-    if (this.currentRow instanceof HTMLTableRowElement) {
-      this.currentRow.classList.remove('highlight');
-    }
+    this.clearHighlights();
   }
 
   onClickGo(cue: TextTrackCue) {
     this.api.getDefaultMedia().currentTime = cue?.startTime;
+    this.clearHighlights();
     this.api.play();
+  }
+
+  clearHighlights() {
+    Array.from(this.cuesTable.nativeElement.querySelectorAll('tr')).forEach((tr: any) => {
+      tr.classList.remove(DEFAULT_TRANSCRIPT_STATE_CSS_CLASS);
+    });
   }
 
   search() {
