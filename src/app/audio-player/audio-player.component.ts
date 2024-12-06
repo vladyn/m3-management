@@ -106,6 +106,17 @@ export class AudioPlayerComponent implements OnInit, AfterViewInit {
     const simpleChange = changes['audio_id'];
 
     if (simpleChange.currentValue !== simpleChange.previousValue) {
+      console.log(simpleChange.currentValue);
+      if (simpleChange.currentValue === '0') {
+        this.src.set('/assets/audio/E_DarinaD_D_2024-10-07_H_100748.wav');
+        this.transcript_src.set('/assets/data/Downloaded_transcriptVVV.vtt');
+        this.type.set('audio/wav');
+        this.model.set([]);
+        this.errors.length = 0;
+        this.audio().load();
+        this.cd.detectChanges();
+        return;
+      }
       this.dmsService.getFileMetadata(this.audio_id)
       .pipe(
         catchError((error) => {

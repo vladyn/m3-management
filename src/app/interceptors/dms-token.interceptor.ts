@@ -11,15 +11,16 @@ export class DmsTokenInterceptor implements HttpInterceptor {
     if (request.url.includes('/connect/token?grant_type=client_credentials')) {
       return next.handle(request);
     }
-    return this.authDmsService.isTokenExist().pipe(
-      catchError((error) => {
-        throw error;
-      }),
-      switchMap((token: string) => {
-        const headers = request.headers.set('Authorization', `Bearer ${token}`);
-        const newRequest = request.clone({ headers });
-        return next.handle(newRequest);
-      })
-    );
+    return next.handle(request);
+    // return this.authDmsService.isTokenExist().pipe(
+    //   catchError((error) => {
+    //     throw error;
+    //   }),
+    //   switchMap((token: string) => {
+    //     const headers = request.headers.set('Authorization', `Bearer ${token}`);
+    //     const newRequest = request.clone({ headers });
+    //     return next.handle(newRequest);
+    //   })
+    // );
   }
 }

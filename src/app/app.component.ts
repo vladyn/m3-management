@@ -28,7 +28,7 @@ export class AppComponent {
   @Input() name = 'm3-management';
   public title = signal('');
   src = signal('');
-  inputModel = signal('161');
+  inputModel = signal('0');
 
   constructor(injector: Injector) {
     this.title.set('m3-management');
