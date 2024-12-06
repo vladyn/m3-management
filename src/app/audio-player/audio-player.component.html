@@ -58,7 +58,7 @@
         preload="{{ preload }}"
         crossorigin
       >
-        <source [src]="src()" [type]="type()" />
+        <source [src]="src()" [type]="type()" crossorigin />
         <track
           [src]="transcript_src()"
           kind="metadata"
@@ -92,6 +92,8 @@
       class="cue-point-manager-layer"
       id="cuePoints"
       *ngIf="showCuePointManager"
+      (scroll)="onScroll($event)"
+      #cuePoints
     >
       <div class="cue-list" id="queList" *ngIf="track?.cues?.length > 0">
         <table class="cue-table" #cues>
