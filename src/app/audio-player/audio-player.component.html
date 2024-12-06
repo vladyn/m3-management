@@ -105,7 +105,7 @@
               (click)="onClickGo(cue)"
             >
               <td class="time">{{ cue.startTime }}</td>
-              <td class="titles">{{ cue.text | searchTerm: searchTerm() }}</td>
+              <td class="titles" [innerHTML]="cue.text | searchTermAndHighlight: searchTerm()"></td>
             </tr>
           </tbody>
         </table>

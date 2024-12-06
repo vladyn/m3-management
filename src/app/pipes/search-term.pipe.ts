@@ -1,7 +1,7 @@
 import { Pipe, PipeTransform, Renderer2, ElementRef } from '@angular/core';
 
 @Pipe({
-  name: 'searchTerm',
+  name: 'searchTermAndHighlight',
   standalone: true,
 })
 export class SearchTerm implements PipeTransform {
@@ -16,6 +16,12 @@ export class SearchTerm implements PipeTransform {
     const container = this.renderer.createElement('div');
 
     const re = new RegExp(searchTerm, 'gi');
-    return value.replace(re, match => `<span class="highlight">${match}</span>`);
+    return value.replace(re, match => {
+      const span = this.renderer.createElement('span');
+      this.renderer.addClass(span, 'highlight');
+      this.renderer.appendChild(span, this.renderer.createText(match));
+      this.renderer.appendChild(container, span);
+      return container.innerHTML;
+    });
   }
 }
