@@ -58,7 +58,7 @@
         preload="{{ preload }}"
         crossorigin
       >
-        <source [src]="src()" [type]="type()" />
+        <source [src]="src()" [type]="type()" crossorigin />
         <track
           [src]="transcript_src()"
           kind="metadata"
@@ -92,23 +92,20 @@
       class="cue-point-manager-layer"
       id="cuePoints"
       *ngIf="showCuePointManager"
+      (scroll)="onScroll($event)"
+      #cuePoints
     >
       <div class="cue-list" id="queList" *ngIf="track?.cues?.length > 0">
-        <table class="cue-table">
-          <thead>
-            <tr class="cue-header-row">
-              <th>Start</th>
-              <th class="titles-header">Text</th>
-            </tr>
-          </thead>
+        <table class="cue-table" #cues>
           <tbody>
             <tr
-              *ngFor="let cue of track?.cues"
+              *ngFor="let cue of patchedCues; let i = index"
+              [id]="cue?.id"
               class="cue-row"
               (click)="onClickGo(cue)"
             >
-              <td>{{ cue.startTime }}</td>
-              <td class="titles">{{ cue.text }}</td>
+              <td class="time">{{ cue.startTime }}</td>
+              <td class="titles" [innerHTML]="cue.text | searchTermAndHighlight: searchTerm()"></td>
             </tr>
           </tbody>
         </table>

@@ -1,13 +1,23 @@
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
-import { Component, Input, ChangeDetectorRef, signal } from '@angular/core';
+import { Component, Input, ChangeDetectorRef, signal, ViewChild, ElementRef } from '@angular/core';
 import type { OnInit, SimpleChanges, AfterViewInit } from '@angular/core';
 import { VgCoreModule, VgApiService } from '@videogular/ngx-videogular/core';
 import { VgControlsModule } from '@videogular/ngx-videogular/controls';
 import { VgOverlayPlayModule } from '@videogular/ngx-videogular/overlay-play';
 import { VgBufferingModule } from '@videogular/ngx-videogular/buffering';
 import { AuthDmsService } from '../services/auth-dms.service/auth-dms.service';
-import { Subscription, catchError, map } from 'rxjs';
+import { SearchTerm } from '../pipes/search-term.pipe';
+import { catchError, debounceTime, fromEvent, map } from 'rxjs';
+import { v4 as uuidv4 } from 'uuid';
+import {
+  DEFAULT_TRANSCRIPT_STATE_CSS_CLASS,
+  DEFAULT_AUDIO_TYPE,
+  DEFAULT_SEARCH_TERM,
+  DEFAULT_PRELOAD,
+  SCROLL_SETTINGS,
+  SCROLL_TOLERANCE
+} from '../../enums';
 
 @Component({
   selector: 'app-audio-player',
@@ -21,12 +31,13 @@ import { Subscription, catchError, map } from 'rxjs';
     VgBufferingModule,
     CommonModule,
     FormsModule,
+    SearchTerm,
   ],
   providers: [VgApiService, AuthDmsService],
 })
 
 export class AudioPlayerComponent implements OnInit, AfterViewInit {
-  preload = 'auto';
+  preload = DEFAULT_PRELOAD;
   api: VgApiService = new VgApiService();
   track: TextTrack | any = [];
   activeCuePoints: ITextTrackCue[] = [];
@@ -37,14 +48,20 @@ export class AudioPlayerComponent implements OnInit, AfterViewInit {
   cabinetContents: Cabinet[] = [];
   src = signal<string>('');
   transcript_src = signal<string>('');
-  type = signal<string>('audio/wav');
+  type = signal<string>(DEFAULT_AUDIO_TYPE);
   audio = signal<HTMLAudioElement>(document.createElement('audio'));
   errors: {message: string}[] = [];
   model = signal<Array<any>> ([] as any);
   playerStateCssClass = signal<string>('');
-  searchTerm = signal<string>('type here to search');
+  searchTerm = signal<string>(DEFAULT_SEARCH_TERM);
+  patchedCues: VTTCue[] = [];
+  currentRow: HTMLTableRowElement | null | unknown = null;
+  isScrolling = true;
+  scrollTopMemoized = 0;
 
   @Input() audio_id = 0;
+  @ViewChild('cues', { static: false }) cuesTable!: ElementRef;
+  @ViewChild('cuePoints', { static: false }) cuePoints!: ElementRef;
 
   constructor(private readonly cd: ChangeDetectorRef, private dmsService: AuthDmsService) {}
 
@@ -53,7 +70,19 @@ export class AudioPlayerComponent implements OnInit, AfterViewInit {
 
     this.api.getDefaultMedia().subscriptions.canPlay.subscribe(() => {
       this.track = this.api.getDefaultMedia().textTracks[0];
+      this.patchedCues = (Array.from(this.track.cues) as VTTCue[]).map((cue: VTTCue) => {
+        cue.id = uuidv4();
+        return cue;
+      });
       this.loaded = true;
+
+      fromEvent(this.cuePoints.nativeElement, 'scroll').pipe(
+        debounceTime(1000),
+      ).subscribe(() => {
+        const scrollTop = this.cuePoints.nativeElement.scrollTop;
+        const sum = scrollTop - this.scrollTopMemoized;
+        this.#handleScroll(sum, scrollTop);
+      });
     });
 
     this.api.getDefaultMedia().subscriptions.playing.subscribe(() => {
@@ -70,24 +99,55 @@ export class AudioPlayerComponent implements OnInit, AfterViewInit {
     });
   }
 
+  #handleScroll(sum: number, scrollTop: number) {
+    if (sum < SCROLL_TOLERANCE && sum > 0) {
+      this.isScrolling = true;
+    } else if (sum >= SCROLL_TOLERANCE) {
+      this.isScrolling = false;
+    } else if (sum < 0) {
+      this.isScrolling = false;
+    }
+    this.scrollTopMemoized = scrollTop;
+  }
+
   onEnterCuePoint($event: ITextTrackCue) {
-    this.activeCuePoints.push({ id: $event.id, text: $event.text });
+    this.activeCuePoints.push({ id: uuidv4(), text: $event.text });
     this.showCuePointManager = true;
+    this.currentRow = Array.from(this.cuesTable.nativeElement.querySelectorAll('tr')).find((tr: any) => tr.id === $event.id);
+    if (this.currentRow instanceof HTMLTableRowElement) {
+      this.isScrolling && this.currentRow.scrollIntoView({ behavior: SCROLL_SETTINGS.scrollBehavior as ScrollBehavior });
+      this.currentRow.classList.add(DEFAULT_TRANSCRIPT_STATE_CSS_CLASS);
+    }
   }
 
   onExitCuePoint($event: TextTrackCue) {
     this.activeCuePoints = this.activeCuePoints.filter(
       (c) => c.id !== $event.id
     );
+    this.clearHighlights();
   }
 
   onClickGo(cue: TextTrackCue) {
     this.api.getDefaultMedia().currentTime = cue?.startTime;
+    this.clearHighlights();
     this.api.play();
+  }
+
+  clearHighlights() {
+    Array.from(this.cuesTable.nativeElement.querySelectorAll('tr')).forEach((tr: any) => {
+      tr.classList.remove(DEFAULT_TRANSCRIPT_STATE_CSS_CLASS);
+    });
   }
 
   search() {
     this.api.seekTime(this.track.cues[0].startTime);
+  }
+
+  onScroll($event: any) {
+    if (false) {
+      console.log('scrolling');
+      console.log($event);
+    }
   }
 
   ngOnInit() {
@@ -181,4 +241,3 @@ interface Cabinet {
   iconName: string;
   iconColor: string;
 }
-

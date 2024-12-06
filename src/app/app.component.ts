@@ -10,6 +10,7 @@ import { createCustomElement } from '@angular/elements';
 import { FormsModule } from '@angular/forms';
 import { ManagementComponent } from './management/management.component';
 import { AudioPlayerComponent } from './audio-player/audio-player.component';
+import { DEFAULT_AUDIO_ID } from '../enums';
 
 @Component({
   selector: 'app-root',
@@ -28,7 +29,7 @@ export class AppComponent {
   @Input() name = 'm3-management';
   public title = signal('');
   src = signal('');
-  inputModel = signal('0');
+  inputModel = signal(DEFAULT_AUDIO_ID);
 
   constructor(injector: Injector) {
     this.title.set('m3-management');
@@ -49,6 +50,6 @@ export class AppComponent {
   }
 
   play() {
-    this.src.set(this.inputModel());
+    this.src.set(this.inputModel() + '');
   }
 }
