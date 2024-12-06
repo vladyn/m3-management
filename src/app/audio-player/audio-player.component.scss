@@ -1,6 +1,7 @@
 $ready-color: #31171f;
 $playing-color: #ea0029;
 $player-height: 40px;
+$romw-highlighted: #64AAB2;
 
 .player-wrapper {
   display: grid;
@@ -56,11 +57,6 @@ vg-playback-button {
   background-color: $ready-color;
 }
 
-.grid-x:nth-child(2n + 1) {
-  background-color: #f0f0f0;
-  width: 100%;
-}
-
 .grid-cell {
   h4 {
     font-size: 80%;
@@ -79,8 +75,11 @@ table.cue-table {
     }
   }
   .cue-row:hover {
-    background-color: #a6a9b1;
+    background-color: $romw-highlighted;
     cursor: pointer;
+  }
+  .cue-row.highlighted {
+    color: $playing-color;
   }
 }
 
