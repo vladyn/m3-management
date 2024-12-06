@@ -7,6 +7,7 @@ import { VgControlsModule } from '@videogular/ngx-videogular/controls';
 import { VgOverlayPlayModule } from '@videogular/ngx-videogular/overlay-play';
 import { VgBufferingModule } from '@videogular/ngx-videogular/buffering';
 import { AuthDmsService } from '../services/auth-dms.service/auth-dms.service';
+import { SearchTerm } from '../pipes/search-term.pipe';
 import { catchError, debounceTime, fromEvent, map } from 'rxjs';
 import { v4 as uuidv4 } from 'uuid';
 import {
@@ -30,6 +31,7 @@ import {
     VgBufferingModule,
     CommonModule,
     FormsModule,
+    SearchTerm,
   ],
   providers: [VgApiService, AuthDmsService],
 })
