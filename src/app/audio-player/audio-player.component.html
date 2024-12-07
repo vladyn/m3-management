@@ -1,115 +1,113 @@
-<div class="player-wrapper">
-  <div class="player-container">
-    <div class="grid-container">
-      <div class="grid-x grid-padding-x" *ngFor="let data of model()">
-        <div class="cell small-12">
-          <div class="grid-cell" *ngFor="let meta of data | keyvalue">
-            <ng-container *ngIf="meta.key === 'createdBy'; else other">
-              <div class="grid-cell-header">
-                <h4>{{ meta.key }}</h4>
-              </div>
-              <div class="grid-cell-section">
-                <ng-container *ngFor="let val of $any(meta).value | keyvalue">
-                  <p *ngIf="val.key === 'displayName'">{{ val.value }}</p>
-                </ng-container>
-              </div>
-            </ng-container>
-            <ng-template #other>
-              <div class="grid-cell-header">
-                <h4>{{ meta.key }}</h4>
-              </div>
-              <div class="grid-cell-section">
-                <p>{{ $any(meta).value * 1000 | date }}</p>
-              </div>
-            </ng-template>
-          </div>
+<div class="player-container">
+  <div class="grid-container">
+    <div class="grid-x grid-padding-x" *ngFor="let data of model()">
+      <div class="cell small-12">
+        <div class="grid-cell" *ngFor="let meta of data | keyvalue">
+          <ng-container *ngIf="meta.key === 'createdBy'; else other">
+            <div class="grid-cell-header">
+              <h4>{{ meta.key }}</h4>
+            </div>
+            <div class="grid-cell-section">
+              <ng-container *ngFor="let val of $any(meta).value | keyvalue">
+                <p *ngIf="val.key === 'displayName'">{{ val.value }}</p>
+              </ng-container>
+            </div>
+          </ng-container>
+          <ng-template #other>
+            <div class="grid-cell-header">
+              <h4>{{ meta.key }}</h4>
+            </div>
+            <div class="grid-cell-section">
+              <p>{{ $any(meta).value * 1000 | date }}</p>
+            </div>
+          </ng-template>
         </div>
       </div>
     </div>
-    <vg-player
-      (onPlayerReady)="onPlayerReady($event)"
-      vg-crossorigin="ctrl.config.crossorigin"
-      style="height: 50px"
-    >
-      <vg-controls [ngClass]="playerStateCssClass()">
-        <vg-play-pause></vg-play-pause>
-        <vg-playback-button></vg-playback-button>
-
-        <vg-time-display
-          vgProperty="current"
-          vgFormat="mm:ss"
-        ></vg-time-display>
-
-        <vg-scrub-bar>
-          <vg-scrub-bar-current-time></vg-scrub-bar-current-time>
-          <vg-scrub-bar-buffering-time></vg-scrub-bar-buffering-time>
-        </vg-scrub-bar>
-
-        <vg-time-display vgProperty="left" vgFormat="mm:ss"></vg-time-display>
-        <vg-time-display vgProperty="total" vgFormat="mm:ss"></vg-time-display>
-
-        <vg-mute></vg-mute>
-      </vg-controls>
-
-      <audio
-        #media
-        [vgMedia]="$any(media)"
-        id="myAudio"
-        preload="{{ preload }}"
-        crossorigin
-      >
-        <source [src]="src()" [type]="type()" crossorigin />
-        <track
-          [src]="transcript_src()"
-          kind="metadata"
-          label="Cue Points"
-          default
-          #metadataTrack
-          vgCuePoints
-          (onEnterCuePoint)="onEnterCuePoint($event)"
-          (onExitCuePoint)="onExitCuePoint($event)"
-        />
-      </audio>
-    </vg-player>
-    <div class="errors" *ngFor="let error of errors">
-      <p>
-        <i class="fa-solid fa-triangle-exclamation"></i> {{ error?.message }}
-      </p>
-    </div>
   </div>
+  <vg-player
+    (onPlayerReady)="onPlayerReady($event)"
+    vg-crossorigin="ctrl.config.crossorigin"
+    style="height: 50px"
+  >
+    <vg-controls [ngClass]="playerStateCssClass()">
+      <vg-play-pause></vg-play-pause>
+      <vg-playback-button></vg-playback-button>
 
-  <div class="cue-point-manager-wrapper">
-    <div class="search-bar">
-      <input
-        type="text"
-        placeholder="Search"
-        [(ngModel)]="searchTerm"
-        [placeholder]="searchTerm()"
-        (keyup)="search()"
-      />
-    </div>
-    <div
-      class="cue-point-manager-layer"
-      id="cuePoints"
-      *ngIf="showCuePointManager"
-      (scroll)="onScroll($event)"
-      #cuePoints
+      <vg-time-display
+        vgProperty="current"
+        vgFormat="mm:ss"
+      ></vg-time-display>
+
+      <vg-scrub-bar>
+        <vg-scrub-bar-current-time></vg-scrub-bar-current-time>
+        <vg-scrub-bar-buffering-time></vg-scrub-bar-buffering-time>
+      </vg-scrub-bar>
+
+      <vg-time-display vgProperty="left" vgFormat="mm:ss"></vg-time-display>
+      <vg-time-display vgProperty="total" vgFormat="mm:ss"></vg-time-display>
+
+      <vg-mute></vg-mute>
+    </vg-controls>
+
+    <audio
+      #media
+      [vgMedia]="$any(media)"
+      id="myAudio"
+      preload="{{ preload }}"
+      crossorigin
     >
-      <div class="cue-list" id="queList" *ngIf="track?.cues?.length > 0">
-        <table class="cue-table" #cues>
-          <tbody>
-            <tr
-              *ngFor="let cue of patchedCues; let i = index"
-              [id]="cue?.id"
-              class="cue-row"
-              (click)="onClickGo(cue)"
-            >
-              <td class="time">{{ cue.startTime }}</td>
-              <td class="titles" [innerHTML]="cue.text | searchTermAndHighlight: searchTerm()"></td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
+      <source [src]="src()" [type]="type()" crossorigin />
+      <track
+        [src]="transcript_src()"
+        kind="metadata"
+        label="Cue Points"
+        default
+        #metadataTrack
+        vgCuePoints
+        (onEnterCuePoint)="onEnterCuePoint($event)"
+        (onExitCuePoint)="onExitCuePoint($event)"
+      />
+    </audio>
+  </vg-player>
+  <div class="errors" *ngFor="let error of errors">
+    <p>
+      <i class="fa-solid fa-triangle-exclamation"></i> {{ error?.message }}
+    </p>
+  </div>
+</div>
+
+<div class="cue-point-manager-wrapper">
+  <div class="search-bar">
+    <input
+      type="text"
+      placeholder="Search"
+      [(ngModel)]="searchTerm"
+      [placeholder]="searchTerm()"
+      (keyup)="search()"
+    />
+  </div>
+  <div
+    class="cue-point-manager-layer"
+    id="cuePoints"
+    *ngIf="showCuePointManager"
+    (scroll)="onScroll($event)"
+    #cuePoints
+  >
+    <div class="cue-list" id="queList" *ngIf="track?.cues?.length > 0">
+      <table class="cue-table" #cues>
+        <tbody>
+          <tr
+            *ngFor="let cue of patchedCues; let i = index"
+            [id]="cue?.id"
+            class="cue-row"
+            (click)="onClickGo(cue)"
+          >
+            <td class="time">{{ cue.startTime }}</td>
+            <td class="titles" [innerHTML]="cue.text | searchTermAndHighlight: searchTerm()"></td>
+          </tr>
+        </tbody>
+      </table>
     </div>
   </div>
 </div>

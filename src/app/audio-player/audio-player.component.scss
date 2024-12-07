@@ -3,7 +3,7 @@ $playing-color: #ea0029;
 $player-height: 40px;
 $romw-highlighted: #64AAB2;
 
-.player-wrapper {
+:host {
   display: grid;
   grid-template-columns: 1fr;
   grid-template-rows: minmax(0, 118px) minmax(20px, auto);
