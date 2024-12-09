@@ -53,7 +53,8 @@ export class AudioPlayerComponent implements OnInit, AfterViewInit {
   errors: {message: string}[] = [];
   model = signal<Array<any>> ([] as any);
   playerStateCssClass = signal<string>('');
-  searchTerm = signal<string>(DEFAULT_SEARCH_TERM);
+  searchTerm = signal<string>('Да.');
+  searchTermPlaceholder = signal<string>(DEFAULT_SEARCH_TERM);
   patchedCues: VTTCue[] = [];
   currentRow: HTMLTableRowElement | null | unknown = null;
   isScrolling = true;
