@@ -2,7 +2,6 @@ $ready-color: #31171f;
 $playing-color: #ea0029;
 $player-height: 40px;
 $row-highlighted: #64AAB2;
-$search-highlighted: #ffd35b;
 
 :host {
   display: grid;
@@ -92,9 +91,4 @@ table.cue-table {
     padding: 0.5em;
     font-size: 1em;
   }
-}
-
-.highlight {
-  display: inline-block;
-  background-color: $search-highlighted;
 }

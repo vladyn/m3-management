@@ -82,10 +82,36 @@
       <input
         type="text"
         placeholder="Search"
-        [(ngModel)]="searchTerm"
         [placeholder]="searchTermPlaceholder()"
-        (keyup)="search()"
+        #input
       />
+    </div>
+    <div
+      class="cue-point-manager-layer"
+      id="cuePoints"
+      *ngIf="showCuePointManager"
+      (scroll)="onScroll($event)"
+      #cuePoints
+    >
+      <div class="cue-list" id="queList" *ngIf="track?.cues?.length > 0">
+        <table class="cue-table" #cues>
+          <tbody>
+            <tr
+              *ngFor="let cue of patchedCues; let i = index"
+              [id]="cue?.id"
+              class="cue-row"
+              (click)="onClickGo(cue)"
+            >
+              <td class="time">{{ cue.startTime }}</td>
+              <td class="titles">
+                <div appHighlight [searchedWord]="searchTerm()" [content]="cue.text"
+                [setDataMatch]="true" [classToApply]="'highlight'">
+                {{cue.text}}></div>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
     </div>
   </div>
 </div>
