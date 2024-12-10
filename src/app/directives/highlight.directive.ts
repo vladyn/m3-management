@@ -28,7 +28,7 @@ export class HighlightDirective implements OnChanges {
       );
     }
 
-    if (!this.searchedWord || searchedWord.currentValue?.length < 3 || !this.classToApply) {
+    if (!this.searchedWord.length || searchedWord.currentValue?.length < 3 || !this.classToApply) {
       this.renderer.setProperty(this.el.nativeElement, 'innerHTML', this.content);
       return;
     }
