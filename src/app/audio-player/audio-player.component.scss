@@ -1,7 +1,7 @@
 $ready-color: #31171f;
 $playing-color: #ea0029;
 $player-height: 40px;
-$romw-highlighted: #64AAB2;
+$row-highlighted: #64AAB2;
 
 :host {
   display: grid;
@@ -75,7 +75,7 @@ table.cue-table {
     }
   }
   .cue-row:hover {
-    background-color: $romw-highlighted;
+    background-color: $row-highlighted;
     cursor: pointer;
   }
   .cue-row.highlighted {

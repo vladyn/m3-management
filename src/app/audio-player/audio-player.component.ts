@@ -7,8 +7,8 @@ import { VgControlsModule } from '@videogular/ngx-videogular/controls';
 import { VgOverlayPlayModule } from '@videogular/ngx-videogular/overlay-play';
 import { VgBufferingModule } from '@videogular/ngx-videogular/buffering';
 import { AuthDmsService } from '../services/auth-dms.service/auth-dms.service';
-import { SearchTerm } from '../pipes/search-term.pipe';
-import { catchError, debounceTime, fromEvent, map } from 'rxjs';
+import { HighlightDirective } from '../directives/highlight.directive';
+import { catchError, debounceTime, fromEvent, map, distinctUntilChanged } from 'rxjs';
 import { v4 as uuidv4 } from 'uuid';
 import {
   DEFAULT_TRANSCRIPT_STATE_CSS_CLASS,
@@ -31,7 +31,7 @@ import {
     VgBufferingModule,
     CommonModule,
     FormsModule,
-    SearchTerm,
+    HighlightDirective,
   ],
   providers: [VgApiService, AuthDmsService],
 })
@@ -53,7 +53,8 @@ export class AudioPlayerComponent implements OnInit, AfterViewInit {
   errors: {message: string}[] = [];
   model = signal<Array<any>> ([] as any);
   playerStateCssClass = signal<string>('');
-  searchTerm = signal<string>(DEFAULT_SEARCH_TERM);
+  searchTerm = signal<string>('Да.');
+  searchTermPlaceholder = signal<string>(DEFAULT_SEARCH_TERM);
   patchedCues: VTTCue[] = [];
   currentRow: HTMLTableRowElement | null | unknown = null;
   isScrolling = true;
@@ -62,6 +63,7 @@ export class AudioPlayerComponent implements OnInit, AfterViewInit {
   @Input() audio_id = 0;
   @ViewChild('cues', { static: false }) cuesTable!: ElementRef;
   @ViewChild('cuePoints', { static: false }) cuePoints!: ElementRef;
+  @ViewChild('input', { static: true }) inputSearch!: ElementRef;
 
   constructor(private readonly cd: ChangeDetectorRef, private dmsService: AuthDmsService) {}
 
@@ -156,8 +158,12 @@ export class AudioPlayerComponent implements OnInit, AfterViewInit {
   }
 
   ngAfterViewInit(): void {
-    setTimeout(() => {
-      this.cd.detectChanges();
+    fromEvent(this.inputSearch.nativeElement, 'input').pipe(
+      map((event: any) => event.target.value),
+      debounceTime(300),
+      distinctUntilChanged()
+    ).subscribe((searchTerm) => {
+      this.searchTerm.set(searchTerm);
     });
   }
 
