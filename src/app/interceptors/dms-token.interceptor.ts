@@ -1,13 +1,14 @@
 import { Injectable } from '@angular/core';
-import { HttpInterceptor, HttpRequest, HttpHandler, HttpEvent } from '@angular/common/http';
-import { Observable, catchError, switchMap } from 'rxjs';
+import type { HttpInterceptor, HttpRequest, HttpHandler, HttpEvent } from '@angular/common/http';
+import { catchError, switchMap } from 'rxjs';
+import type { Observable } from 'rxjs';
 import { AuthDmsService } from '../services/auth-dms.service/auth-dms.service';
 
 @Injectable()
 export class DmsTokenInterceptor implements HttpInterceptor {
-  constructor(private authDmsService: AuthDmsService) {}
+  constructor(private readonly authDmsService: AuthDmsService) {}
 
-  intercept(request: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
+  intercept(request: HttpRequest<unknown>, next: HttpHandler): Observable<HttpEvent<unknown>> {
     if (request.url.includes('/connect/token?grant_type=client_credentials')) {
       return next.handle(request);
     }
