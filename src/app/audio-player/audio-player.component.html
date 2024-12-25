@@ -86,21 +86,28 @@
         #input
       />
     </div>
+    <div class="counting" appCounting>sadfsda</div>
     <div
       class="cue-point-manager-layer"
       id="cuePoints"
       *ngIf="showCuePointManager"
-      (scroll)="onScroll($event)"
       #cuePoints
     >
     <div class="cue-list" id="queList" *ngIf="track?.cues?.length > 0">
       <table class="cue-table" #cues>
+        <thead>
+          <tr>
+            <th>Time</th>
+            <th>Titles</th>
+          </tr>
+        </thead>
         <tbody>
           <tr
             *ngFor="let cue of patchedCues; let i = index"
             [id]="cue?.id"
             class="cue-row"
             (click)="onClickGo(cue)"
+            (keypress)="onKeyPress($event, cue)"
           >
             <td class="time">{{ cue.startTime }}</td>
             <td class="titles">

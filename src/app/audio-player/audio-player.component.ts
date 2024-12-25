@@ -7,7 +7,7 @@ import { VgControlsModule } from '@videogular/ngx-videogular/controls';
 import { VgOverlayPlayModule } from '@videogular/ngx-videogular/overlay-play';
 import { VgBufferingModule } from '@videogular/ngx-videogular/buffering';
 import { AuthDmsService } from '../services/auth-dms.service/auth-dms.service';
-import { HighlightDirective } from '../directives/highlight.directive';
+import { HighlightDirective, CountingDirective } from '../directives';
 import { catchError, debounceTime, fromEvent, map, distinctUntilChanged } from 'rxjs';
 import { v4 as uuidv4 } from 'uuid';
 import {
@@ -32,6 +32,7 @@ import {
     CommonModule,
     FormsModule,
     HighlightDirective,
+    CountingDirective
   ],
   providers: [VgApiService, AuthDmsService],
 })
@@ -136,19 +137,19 @@ export class AudioPlayerComponent implements OnInit, AfterViewInit {
   }
 
   clearHighlights() {
-    Array.from(this.cuesTable.nativeElement.querySelectorAll('tr')).forEach((tr: any) => {
-      tr.classList.remove(DEFAULT_TRANSCRIPT_STATE_CSS_CLASS);
-    });
+    const rows = Array.from(this.cuesTable.nativeElement.querySelectorAll('tr'));
+    for (const tr of rows) {
+      (tr as HTMLTableRowElement).classList.remove(DEFAULT_TRANSCRIPT_STATE_CSS_CLASS);
+    }
   }
 
   search() {
     this.api.seekTime(this.track.cues[0].startTime);
   }
 
-  onScroll($event: any) {
-    if (false) {
-      console.log('scrolling');
-      console.log($event);
+  onKeyPress($event: KeyboardEvent, cue: TextTrackCue) {
+    if ($event.key === 'Enter') {
+      this.onClickGo(cue);
     }
   }
 
@@ -172,7 +173,6 @@ export class AudioPlayerComponent implements OnInit, AfterViewInit {
     const simpleChange = changes['audio_id'];
 
     if (simpleChange.currentValue !== simpleChange.previousValue) {
-      console.log(simpleChange.currentValue);
       if (simpleChange.currentValue === '0') {
         this.src.set('/assets/audio/E_DarinaD_D_2024-10-07_H_100748.wav');
         this.transcript_src.set('/assets/data/Downloaded_transcriptVVV.vtt');

@@ -1,22 +1,24 @@
-import { Directive, ElementRef, Input, OnChanges, SimpleChanges } from '@angular/core';
+import { Directive, Input } from '@angular/core';
+import { ElementRef, OnChanges, SimpleChanges } from '@angular/core';
 
 @Directive({
   selector: '[searchTermHighlight]',
   standalone: true,
 })
-export class SearchTermHighlight implements OnChanges {
-  @Input() searchTerm: string = '';
-  @Input() paragraphToHighlight: string = '';
 
-  constructor(private element: ElementRef) { }
+export class SearchTermHighlight implements OnChanges {
+  @Input() searchTerm = '';
+  @Input() paragraphToHighlight = '';
+
+  constructor(private readonly element: ElementRef) { }
 
   ngOnChanges(changes: SimpleChanges): void {
     if (changes['searchTerm'] || changes['paragraphToHighlight']) {
-      this.boldSearchTerm();
+      this.highlight();
     }
   }
 
-  private boldSearchTerm() {
+  private highlight() {
     if (!this.searchTerm || !this.paragraphToHighlight) {
       this.element.nativeElement.innerHTML = this.paragraphToHighlight;
       return;

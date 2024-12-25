@@ -6,14 +6,14 @@ import { Directive, Input, SimpleChanges, Renderer2, ElementRef, OnChanges } fro
   standalone: true,
 })
 export class HighlightDirective implements OnChanges {
-  @Input() searchedWord: string = '';
-  @Input() content: string = '';
-  @Input() classToApply: string = '';
+  @Input() searchedWord = '';
+  @Input() content = '';
+  @Input() classToApply = '';
   @Input() setDataMatch = false;
 
-  constructor(private el: ElementRef, private renderer: Renderer2) { }
+  constructor(private readonly el: ElementRef, private readonly renderer: Renderer2) { }
 
-  ngOnChanges(changes: SimpleChanges): void|string {
+  ngOnChanges(changes: SimpleChanges): void {
     const { searchedWord } = changes;
 
     if (!this.content || searchedWord.firstChange) {
